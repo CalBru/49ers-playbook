@@ -108,6 +108,8 @@ var Drills = (function () {
     locked = false;
     var q = queue[idx], p = q.play, name = Plays.name(p);
 
+    /* What is written vs what Coach yells -- usually the same, but the drill
+       must call it the way he says it. */
     if (mode === 'hear')      renderHear(q, p, name);
     else if (mode === 'see')  renderSee(q, p, name);
     else                      renderDo(q, p, name);
@@ -145,7 +147,7 @@ var Drills = (function () {
     fb.className = 'feedback ' + (right ? 'is-ok' : 'is-no');
     fb.textContent = right ? '✅ Nice! That is it.' : '👉 This one is ' + Plays.name(play) + '.';
     if (note) fb.textContent += ' ' + note;
-    Speech.say(right ? 'Nice!' : 'That one is ' + Plays.name(play));
+    Speech.say(right ? 'Nice!' : 'That one is ' + Plays.spoken(play));
 
     /* Wrong ones come back later in the round — no penalty, just another look. */
     if (!right) queue.push(queue[idx]);
@@ -171,8 +173,8 @@ var Drills = (function () {
     host.querySelector('#ch').appendChild(choiceBtns(q, name, function (r) {
       afterAnswer(r, p);
     }));
-    host.querySelector('#replay').addEventListener('click', function () { Speech.callPlay(name); });
-    Speech.callPlay(name);
+    host.querySelector('#replay').addEventListener('click', function () { Speech.callPlay(Plays.spoken(p)); });
+    Speech.callPlay(Plays.spoken(p));
   }
 
   /* --- mode 2: watch it, name it --------------------------------------- */
@@ -243,8 +245,8 @@ var Drills = (function () {
       ch.appendChild(b);
     });
 
-    host.querySelector('#replay').addEventListener('click', function () { Speech.callPlay(name); });
-    Speech.callPlay(name);
+    host.querySelector('#replay').addEventListener('click', function () { Speech.callPlay(Plays.spoken(p)); });
+    Speech.callPlay(Plays.spoken(p));
   }
 
   /* ------------------------------------------------------------- scoring */

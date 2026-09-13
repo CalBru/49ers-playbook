@@ -23,9 +23,23 @@ can't read them yet.
 ## The plays
 
 Four runs — Dive, Sweep, Reverse, Fake Reverse.
-Four passes — Sweep Pass, RB Pass, Fake Dive WR Pass, Fake Sweep C Pass.
+Four passes — Sweep Pass, Running Back Pass, Fake Dive Receiver Pass,
+Fake Sweep Center Pass.
 
 Each one flips, so that's 16 calls from 8 shapes. The boys only have to learn 8.
+
+The last three are written out in full on purpose. The cards use shorthand — `RB
+Pass Right`, `Fake Dive WR Pass Left`, `Fake Sweep Left C Pass` — but the drills
+read every play name out loud, and a speech synthesiser says "W-R" as two
+letters, which means nothing to a six-year-old.
+
+If Coach actually calls a play differently from how it's written, give that play
+a `spokenTpl` in `js/plays.js` and the app will *say* that while still *showing*
+the written name:
+
+```js
+id: 'rbpass', nameTpl: 'Running Back Pass {D}', spokenTpl: 'R B Pass {D}',
+```
 
 > **Heads up on Reverse Right:** the name says Right but the ball finishes going
 > **left** — the Runner starts right, then hands it back. The app never lets a kid

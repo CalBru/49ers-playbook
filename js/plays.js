@@ -138,8 +138,9 @@ var Plays = (function () {
     },
 
     {
-      /* "RB Pass" = a pass TO the Running Back. He does not throw it. */
-      id: 'rbpass', nameTpl: 'RB Pass {D}', dir: 'Right', type: 'pass', level: 3,
+      /* Card says "RB Pass Right". A pass TO the Running Back -- he does not throw
+         it. Spelled out here because the drill reads the name out loud. */
+      id: 'rbpass', nameTpl: 'Running Back Pass {D}', dir: 'Right', type: 'pass', level: 3,
       coach: 'Fake it to the Runner, then throw it to him.',
       assignments: {
         C:  { say: 'Snap the ball, then run straight down the field.',
@@ -160,7 +161,7 @@ var Plays = (function () {
     },
 
     {
-      id: 'fakedive', nameTpl: 'Fake Dive WR Pass {D}', dir: 'Left', type: 'pass', level: 3,
+      id: 'fakedive', nameTpl: 'Fake Dive Receiver Pass {D}', dir: 'Left', type: 'pass', level: 3,
       coach: 'Fake the Dive, throw to the Catcher.',
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
@@ -180,8 +181,8 @@ var Plays = (function () {
     },
 
     {
-      /* "C Pass" = a pass to the Center. */
-      id: 'fakesweepc', nameTpl: 'Fake Sweep {D} C Pass', dir: 'Left', type: 'pass', level: 3,
+      /* Card says "Fake Sweep Left C Pass". The "C" is the Center -- he catches it. */
+      id: 'fakesweepc', nameTpl: 'Fake Sweep {D} Center Pass', dir: 'Left', type: 'pass', level: 3,
       coach: 'Fake the Sweep, throw to the Snapper.',
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}. The ball is coming to YOU!',
@@ -221,6 +222,13 @@ var Plays = (function () {
 
   function name(play) {
     return play.nameTpl.replace(/\{D\}/g, dir(play));
+  }
+
+  /* How the play SOUNDS when Coach calls it. Defaults to the written name. Give
+     a play a spokenTpl only if what Coach yells differs from what is written --
+     e.g. spokenTpl: 'R B Pass {D}' to have it read out as letters. */
+  function spoken(play) {
+    return (play.spokenTpl || play.nameTpl).replace(/\{D\}/g, dir(play));
   }
 
   /* A flipped play is the same object with flipped:true. All the geometry and
@@ -292,7 +300,7 @@ var Plays = (function () {
 
   return {
     list: LIST, all: all, byId: byId,
-    flip: flip, name: name, dir: dir, text: text,
+    flip: flip, name: name, spoken: spoken, dir: dir, text: text,
     assignment: assignment, ballEvents: ballEvents, carrier: carrier,
     LOS: LOS
   };

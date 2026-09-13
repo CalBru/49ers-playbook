@@ -185,7 +185,7 @@ var App = (function () {
 
   function hike() {
     var p = current();
-    Speech.callPlay(Plays.name(p));
+    Speech.callPlay(Plays.spoken(p));
     paintPlay(true);
     if (state.pos) award(p.id);
   }
@@ -246,7 +246,7 @@ var App = (function () {
     $('flipBtn').addEventListener('click', function () {
       view.flipped = !view.flipped;
       paintPlay();
-      Speech.callPlay(Plays.name(current()));
+      Speech.callPlay(Plays.spoken(current()));
     });
     $('slowBtn').addEventListener('click', function () {
       view.slow = !view.slow;
@@ -255,7 +255,7 @@ var App = (function () {
     });
     $('justMe').addEventListener('change', function () { paintPlay(); });
     $('playNameSpeak').addEventListener('click', function () {
-      Speech.callPlay(Plays.name(current()));
+      Speech.callPlay(Plays.spoken(current()));
     });
 
     go('home');
