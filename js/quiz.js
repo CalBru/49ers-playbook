@@ -67,16 +67,16 @@ var Quiz = (function () {
   }
   function onPosChange() { start(host); }
 
-  /* Nothing forces a position up front, so when the game needs one it offers
-     the choice right here rather than sending the kid off to find a button. */
+  /* The position bar sits right above this, so point at it rather than
+     duplicating the five buttons here. */
   function renderNeedPos() {
     host.innerHTML =
       '<div class="drill">' +
-        '<h2 class="drill__q">Which spot are you playing?</h2>' +
-        '<p class="drill__hint">The questions are all about what YOU do.</p>' +
-        '<div class="poscards" id="quizPos"></div>' +
+        '<p class="drill__arrow">☝️</p>' +
+        '<h2 class="drill__q">Tap your spot up top</h2>' +
+        '<p class="drill__hint">Every question here is about what YOU do, ' +
+          'so pick which one you are playing.</p>' +
       '</div>';
-    App.posCards(host.querySelector('#quizPos'));
   }
 
   /* ------------------------------------------------------------ feedback */

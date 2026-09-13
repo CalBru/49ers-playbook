@@ -82,11 +82,14 @@ var Plays = (function () {
               segs: [{ style: 'solid', pts: [[20,70],[20,30]] }] },
         WR: { say: 'Come across, take the ball from the Runner, and keep running {L}!',
               ballCarrier: true,
-              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[27,64]] }] },
+              segs: [{ style: 'solid', pts: [[80,70],[64,82],[41,84],[27,64]] }] },
         QB: { say: 'Catch the snap and hand it to the Runner.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'Take the ball, start running {R}, then hand it off to the Catcher coming across. Keep running!',
-              segs: [{ style: 'solid', pts: [[50,85],[60,76],[76,46]] }] }
+              /* The bend at [62,81] is the mesh point -- it puts the Runner and
+                 the Catcher shoulder to shoulder so the exchange reads as a
+                 handoff rather than a pitch. */
+              segs: [{ style: 'solid', pts: [[50,85],[62,81],[78,48]] }] }
       },
       ball: [ { from:'C', to:'QB', kind:'snap' },
               { from:'QB', to:'RB', kind:'handoff' },
@@ -104,13 +107,13 @@ var Plays = (function () {
         WL: { say: 'Run up a few steps, then turn around and come back for the ball.',
               segs: [{ style: 'solid', pts: [[20,70],[20,44],[24,49]] }] },
         WR: { say: 'Come across and FAKE like you are taking the ball, then keep running {L}.',
-              segs: [{ style: 'fake',  pts: [[80,70],[60,84]] },
-                     { style: 'solid', pts: [[60,84],[41,84],[29,63]] }] },
+              segs: [{ style: 'fake',  pts: [[80,70],[64,82]] },
+                     { style: 'solid', pts: [[64,82],[41,84],[29,63]] }] },
         QB: { say: 'Catch the snap and hand it to the Runner.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'Take the ball, FAKE the handoff to the Catcher, then KEEP IT and run {R}!',
               ballCarrier: true,
-              segs: [{ style: 'solid', pts: [[50,85],[60,76],[77,45]] }] }
+              segs: [{ style: 'solid', pts: [[50,85],[62,81],[77,45]] }] }
       },
       ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'RB', kind:'handoff' } ]
     },

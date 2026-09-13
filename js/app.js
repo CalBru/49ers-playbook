@@ -59,33 +59,34 @@ var App = (function () {
     else go('home');
   }
 
-  /* ------------------------------------------------------- position chip */
-  function posCardHTML(p, on) {
-    return '<button class="poscard' + (on ? ' is-on' : '') + '" data-pos="' + p.key + '"' +
-           ' style="--c:' + p.color + '">' +
-           '<span class="poscard__num">' + p.num + '</span>' +
-           '<span class="poscard__txt">' +
-             '<b class="poscard__name">' + p.name + '</b>' +
-             '<i class="poscard__nick">' + (p.side ? p.side + ' · ' : '') + p.nick + '</i>' +
-           '</span></button>';
-  }
-
-  function renderPosCards(host) {
-    host.innerHTML = Positions.list.map(function (p) {
-      return posCardHTML(p, p.key === state.pos);
+  /* -------------------------------------------------------- position bar */
+  /* The bar lives under the header on every screen. Five numbered buttons
+     matching the numbers on the field, so the mapping is learned by sight. */
+  function renderPosBar() {
+    $('posBarRow').innerHTML = Positions.list.map(function (p) {
+      return '<button class="posbtn' + (p.key === state.pos ? ' is-on' : '') + '"' +
+             ' data-pos="' + p.key + '" style="--c:' + p.color + '">' +
+               '<span class="posbtn__num">' + p.num + '</span>' +
+               '<span class="posbtn__lbl">' + p.nick.replace(/^The /, '') +
+                 (p.side ? ' ' + p.side.charAt(0) : '') + '</span>' +
+             '</button>';
     }).join('');
+    syncPosBar();
   }
 
-  function syncChip() {
+  function syncPosBar() {
     var p = state.pos && Positions.get(state.pos);
-    $('posChipLabel').textContent = p ? Positions.shortName(p.key) : 'Pick your spot';
-    $('posChipDot').style.background = p ? p.color : '#fff';
-    /* Nothing forces a position up front, so the chip pulses until one is set. */
-    $('posChip').classList.toggle('is-empty', !p);
+    $('posBarLabel').textContent = p ? "I'm the " + Positions.fullName(p.key)
+                                     : 'Who are you today?';
+    $('posBar').classList.toggle('is-empty', !p);
+    var btns = $('posBarRow').children;
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('is-on', btns[i].getAttribute('data-pos') === state.pos);
+    }
   }
 
   function setPos(key) {
-    state.pos = key; save(); syncChip();
+    state.pos = key; save(); syncPosBar();
     /* Re-explain whatever is on screen from the new set of eyes. */
     if (state.screen === 'home')      renderHome();
     if (state.screen === 'plays')     renderPlayList();
@@ -95,15 +96,8 @@ var App = (function () {
     if (state.screen === 'quiz')      Quiz.onPosChange();
   }
 
-  function openSheet() {
-    renderPosCards($('sheetPosCards'));
-    $('posSheet').hidden = false;
-  }
-  function closeSheet() { $('posSheet').hidden = true; }
-
   /* ----------------------------------------------------------------- home */
   function renderHome() {
-    renderPosCards($('homePosCards'));
     var n = starCount(), total = Plays.list.length;
     $('homeStars').textContent = n
       ? '⭐ ' + n + ' of ' + total + ' plays learned'
@@ -222,22 +216,21 @@ var App = (function () {
 
   /* ----------------------------------------------------------------- wire */
   function init() {
-    load(); syncChip();
+    load(); renderPosBar();
 
     $('homeBtn').addEventListener('click', function () { go('home'); });
     $('backBtn').addEventListener('click', back);
-    $('posChip').addEventListener('click', openSheet);
     $('randomPos').addEventListener('click', function () {
-      var k = Positions.keys[Math.floor(Math.random() * Positions.keys.length)];
-      setPos(k); closeSheet();
+      var pool = Positions.keys.filter(function (k) { return k !== state.pos; });
+      var k = pool[Math.floor(Math.random() * pool.length)];
+      setPos(k);
       Speech.say('You are the ' + Positions.shortName(k) + '!');
     });
 
     document.addEventListener('click', function (e) {
-      var t = e.target.closest ? e.target.closest('[data-close],[data-pos],[data-go],[data-say],[data-be]') : null;
+      var t = e.target.closest ? e.target.closest('[data-pos],[data-go],[data-say],[data-be]') : null;
       if (!t) return;
-      if (t.hasAttribute('data-close')) return closeSheet();
-      if (t.hasAttribute('data-pos'))   { setPos(t.getAttribute('data-pos')); closeSheet(); return; }
+      if (t.hasAttribute('data-pos'))   { setPos(t.getAttribute('data-pos')); return; }
       if (t.hasAttribute('data-go'))    return go(t.getAttribute('data-go'));
       if (t.hasAttribute('data-say'))   return Speech.say(Positions.get(t.getAttribute('data-say')).job);
       if (t.hasAttribute('data-be'))    { setPos(t.getAttribute('data-be')); return; }
@@ -260,7 +253,6 @@ var App = (function () {
 
   return {
     go: go, setPos: setPos, confetti: confetti, award: award,
-    posCards: renderPosCards, openSheet: openSheet,
     get pos() { return state.pos; },
     get stars() { return state.stars; },
     starCount: starCount

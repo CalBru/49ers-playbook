@@ -167,13 +167,32 @@ var Field = (function () {
   }
 
   /* ------------------------------------------------------------- timeline */
-  function schedule(play) {
+  /* A handoff is scheduled for the moment the two players are actually closest
+     to each other, so the ball changes hands where they meet. Timing it on a
+     fixed clock instead made the ball leap an open gap, which reads as a pass --
+     wrong for the reverse, where the exchange is hand-to-hand. */
+  function schedule(api, play) {
     var evs = Plays.ballEvents(play), t = 0.02;
+
     evs.forEach(function (e) {
-      var dur = e.kind === 'snap' ? 0.08 : e.kind === 'throw' ? 0.26 : 0.10;
-      if (e.kind === 'throw') t = Math.max(t, 0.46);   // let the route develop
-      e.t0 = t; e.t1 = t + dur;
-      t = e.t1 + 0.05;
+      if (e.kind === 'snap') {
+        e.t0 = t; e.t1 = t + 0.08;
+      } else if (e.kind === 'throw') {
+        e.t0 = Math.max(t + 0.04, 0.46);      // let the route develop first
+        e.t1 = e.t0 + 0.26;
+      } else {
+        var lo = Math.max(t + 0.02, 0.13), hi = 0.72, best = lo, bestD = Infinity;
+        for (var p = lo; p <= hi; p += 0.01) {
+          var a = tokenPos(api, e.from, p), b = tokenPos(api, e.to, p);
+          var d2 = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+          if (d2 < bestD) { bestD = d2; best = p; }
+        }
+        /* Short and flat: an exchange, not a flight. */
+        e.t0 = Math.max(lo, best - 0.018);
+        e.t1 = e.t0 + 0.036;
+        e.gap = Math.sqrt(bestD);
+      }
+      t = e.t1 + 0.04;
     });
     return evs;
   }
@@ -187,7 +206,7 @@ var Field = (function () {
   }
 
   function positionBall(api, play, p) {
-    var evs = api._evs || (api._evs = schedule(play));
+    var evs = api._evs || (api._evs = schedule(api, play));
     var pos = null;
 
     for (var i = 0; i < evs.length; i++) {
@@ -195,6 +214,7 @@ var Field = (function () {
       if (p >= e.t0 && p <= e.t1) {
         var t = ease((p - e.t0) / (e.t1 - e.t0));
         var a = tokenPos(api, e.from, p), b = tokenPos(api, e.to, p);
+        /* Only a throw leaves the ground. */
         var lift = e.kind === 'throw' ? Math.sin(t * Math.PI) * 6 : 0;
         pos = { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) - lift };
         break;

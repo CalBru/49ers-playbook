@@ -10,16 +10,23 @@
 </head>
 <body>
 
-<header class="appbar">
-  <button class="appbar__back" id="backBtn" aria-label="Go back" hidden>&#8592;</button>
-  <button class="appbar__home" id="homeBtn" aria-label="Home">&#127944;</button>
-  <h1 class="appbar__title" id="appTitle">49ers Playbook</h1>
-  <button class="poschip" id="posChip" aria-haspopup="dialog">
-    <span class="poschip__dot" id="posChipDot"></span>
-    <span class="poschip__label" id="posChipLabel">Pick a spot</span>
-    <span class="poschip__caret">&#9662;</span>
-  </button>
-</header>
+<div class="top">
+  <header class="appbar">
+    <button class="appbar__back" id="backBtn" aria-label="Go back" hidden>&#8592;</button>
+    <button class="appbar__home" id="homeBtn" aria-label="Home">&#127944;</button>
+    <h1 class="appbar__title" id="appTitle">49ers Playbook</h1>
+  </header>
+
+  <!-- Always visible, on every screen. Swapping spots is the thing these boys
+       do most, so it is a permanent control rather than a menu. -->
+  <nav class="posbar" id="posBar" aria-label="Pick your position">
+    <div class="posbar__lead">
+      <span class="posbar__label" id="posBarLabel">Who are you today?</span>
+      <button class="posbar__dice" id="randomPos" aria-label="Pick one for me">&#127922;</button>
+    </div>
+    <div class="posbar__row" id="posBarRow"></div>
+  </nav>
+</div>
 
 <main id="main">
 
@@ -44,8 +51,6 @@
       </button>
     </div>
     <p class="stars-line" id="homeStars"></p>
-    <h2 class="big-q big-q--sub">Playing a different spot?</h2>
-    <div class="poscards" id="homePosCards"></div>
   </section>
 
   <!-- PLAY LIST -->
@@ -92,17 +97,6 @@
   </section>
 
 </main>
-
-<!-- POSITION SWITCHER SHEET -->
-<div class="sheet" id="posSheet" hidden>
-  <div class="sheet__scrim" data-close></div>
-  <div class="sheet__panel" role="dialog" aria-label="Pick your position">
-    <h3 class="sheet__title">Which spot are you playing?</h3>
-    <div class="poscards poscards--sheet" id="sheetPosCards"></div>
-    <button class="sheet__random" id="randomPos">&#127922; Surprise me</button>
-    <button class="sheet__close" data-close>Close</button>
-  </div>
-</div>
 
 <div class="confetti" id="confetti" aria-hidden="true"></div>
 

@@ -18,9 +18,10 @@ Works on a phone, an iPad, or a computer. No app to install.
   are you faking or do you really get it. Earns stars.
 - **The Positions** — what each of the five spots does.
 
-Picking a position is optional and can be changed from any screen — the button
-in the top-right pulses until you choose one. Nothing asks you to commit before
-you've seen anything.
+Picking a position is optional. Five numbered buttons sit under the header on
+every screen — the numbers match the ones on the field — so swapping spots is one
+tap from anywhere, and the bar highlights itself until a spot is chosen. Nothing
+asks you to commit before you've seen anything.
 
 The animation runs deliberately slowly. Six-year-olds can't follow five routes at
 game speed, and a learning tool has no reason to run at one.
@@ -64,6 +65,9 @@ Same language as the laminated cards:
 | **Dotted** | A **fake** / misdirection — not pre-snap motion. |
 | **Long dash** | The **pass**, in the air. |
 | **Solid** | A real route or run, without the ball. Drawn in that player's colour. |
+
+A handoff is timed to the moment the two players are actually closest, so the
+ball changes hands where they meet and stays flat. Only a thrown ball arcs.
 
 The one thing worth knowing: **Sweep Left** and **Reverse Right** look almost
 identical, but on Sweep the Runner's line is *dotted* (he's faking — the ball goes
