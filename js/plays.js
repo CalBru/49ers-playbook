@@ -1,0 +1,299 @@
+/* ============================================================================
+   plays.js — THE PLAYBOOK. This is the only file you need to edit to fix a
+   route, reword an instruction, or add a play.
+
+   HOW THE DIAGRAMS WORK (matching Coach's whiteboard cards):
+     red line   -> THE BALL. Whoever's route is red ends up with it.
+     dotted     -> a FAKE / misdirection. Not pre-snap motion.
+     long dash  -> the PASS, in the air.
+     solid blue -> a real route or run, without the ball.
+
+   COORDINATES: x 0..100 left-to-right, y 0..100 where SMALLER y is FURTHER
+   DOWNFIELD. The line of scrimmage is y = 70. Flipping a play is just
+   x -> 100 - x, so every play works both directions for free.
+
+   DIRECTION WORDS: write {L} and {R} instead of "left" and "right". They
+   render as LEFT and RIGHT, and they swap automatically when the play flips.
+   Same for {D} in a play name, which is the play's own direction.
+
+   SEGMENT STYLES: 'solid' (real route) | 'fake' (dotted) | 'throw' (long dash)
+   Set ballCarrier:true on whoever finishes the play with the ball -> red route.
+============================================================================ */
+
+var Plays = (function () {
+
+  var LOS = 70;
+
+  var LIST = [
+
+    /* ---------------------------------------------------------------- RUNS */
+    {
+      id: 'dive', nameTpl: 'Dive {D}', dir: 'Right', type: 'run', level: 1,
+      coach: 'Straight ahead, right up the gut.',
+      assignments: {
+        C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around and come back for it.',
+              segs: [{ style: 'solid', pts: [[50,70],[38,52],[41,58]] }] },
+        WL: { say: 'Run straight down the field as fast as you can!',
+              segs: [{ style: 'solid', pts: [[20,70],[20,30]] }] },
+        WR: { say: 'Run behind everybody and FAKE like you are getting the ball, then keep going {L} and up the field.',
+              segs: [{ style: 'solid', pts: [[80,70],[63,84]] },
+                     { style: 'fake',  pts: [[63,84],[43,84]] },
+                     { style: 'solid', pts: [[43,84],[31,63]] }] },
+        QB: { say: 'Catch the snap, fake it to the Catcher running by, then hand it to the Runner.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'Take the ball and RUN through the hole on the {R}!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[50,85],[62,52]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'RB', kind:'handoff' } ]
+    },
+
+    {
+      id: 'sweep', nameTpl: 'Sweep {D}', dir: 'Left', type: 'run', level: 1,
+      coach: 'Wide around the outside.',
+      assignments: {
+        C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
+              segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
+        WL: { say: 'Run straight down the field!',
+              segs: [{ style: 'solid', pts: [[20,70],[20,30]] }] },
+        WR: { say: 'Come across, take the ball, and run wide to the {L}!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[27,64]] }] },
+        QB: { say: 'Catch the snap, fake it to the Runner, then hand it to the Catcher coming across.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'FAKE like you have the ball, then run straight down the field.',
+              segs: [{ style: 'fake',  pts: [[50,85],[58,74]] },
+                     { style: 'solid', pts: [[58,74],[58,32]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'WR', kind:'handoff' } ]
+    },
+
+    {
+      /* NOTE: the card says "Reverse Right" but the ball finishes going LEFT --
+         the Runner starts right, the Catcher takes it the other way. Never let
+         a kid guess direction from this name; the instructions say it outright. */
+      id: 'reverse', nameTpl: 'Reverse {D}', dir: 'Right', type: 'run', level: 2,
+      coach: 'Starts one way, goes the other.',
+      heads_up: 'Careful! Reverse {D} ends up going {L}.',
+      assignments: {
+        C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
+              segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
+        WL: { say: 'Run straight down the field!',
+              segs: [{ style: 'solid', pts: [[20,70],[20,30]] }] },
+        WR: { say: 'Come across, take the ball from the Runner, and keep running {L}!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[27,64]] }] },
+        QB: { say: 'Catch the snap and hand it to the Runner.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'Take the ball, start running {R}, then hand it off to the Catcher coming across. Keep running!',
+              segs: [{ style: 'solid', pts: [[50,85],[60,76],[76,46]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' },
+              { from:'QB', to:'RB', kind:'handoff' },
+              { from:'RB', to:'WR', kind:'handoff' } ]
+    },
+
+    {
+      /* The card has a faint "Pass" watermark -- ignore it. This one is a RUN.
+         Plays 'reverse' and 'fakereverse' look identical until the mesh point. */
+      id: 'fakereverse', nameTpl: 'Fake Reverse {D}', dir: 'Right', type: 'run', level: 2,
+      coach: 'Looks just like Reverse — but the Runner keeps it.',
+      assignments: {
+        C:  { say: 'Snap the ball, run straight up, then cut to the {L}.',
+              segs: [{ style: 'solid', pts: [[50,70],[50,56],[36,56]] }] },
+        WL: { say: 'Run up a few steps, then turn around and come back for the ball.',
+              segs: [{ style: 'solid', pts: [[20,70],[20,44],[24,49]] }] },
+        WR: { say: 'Come across and FAKE like you are taking the ball, then keep running {L}.',
+              segs: [{ style: 'fake',  pts: [[80,70],[60,84]] },
+                     { style: 'solid', pts: [[60,84],[41,84],[29,63]] }] },
+        QB: { say: 'Catch the snap and hand it to the Runner.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'Take the ball, FAKE the handoff to the Catcher, then KEEP IT and run {R}!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[50,85],[60,76],[77,45]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'RB', kind:'handoff' } ]
+    },
+
+    /* ------------------------------------------------------------- PASSES */
+    {
+      id: 'sweeppass', nameTpl: 'Sweep {D} Pass', dir: 'Left', type: 'pass', level: 3,
+      coach: 'Looks like Sweep — then the Catcher throws it.',
+      assignments: {
+        C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around. The ball is coming to YOU!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[50,70],[33,48],[33,55]] }] },
+        WL: { say: 'Run straight down the field to clear everybody out!',
+              segs: [{ style: 'solid', pts: [[20,70],[20,26]] }] },
+        WR: { say: 'Come across, take the ball, run {L} -- then STOP and THROW it to the Snapper!',
+              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[31,84]] }] },
+        QB: { say: 'Catch the snap and hand it to the Catcher coming across.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'Run up the field on the {R} side.',
+              segs: [{ style: 'solid', pts: [[50,85],[60,76],[60,34]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' },
+              { from:'QB', to:'WR', kind:'handoff' },
+              { from:'WR', to:'C',  kind:'throw' } ]
+    },
+
+    {
+      /* "RB Pass" = a pass TO the Running Back. He does not throw it. */
+      id: 'rbpass', nameTpl: 'RB Pass {D}', dir: 'Right', type: 'pass', level: 3,
+      coach: 'Fake it to the Runner, then throw it to him.',
+      assignments: {
+        C:  { say: 'Snap the ball, then run straight down the field.',
+              segs: [{ style: 'solid', pts: [[50,70],[50,28]] }] },
+        WL: { say: 'Run straight down the field!',
+              segs: [{ style: 'solid', pts: [[20,70],[20,28]] }] },
+        WR: { say: 'Run across behind everybody to the {L} to trick them.',
+              segs: [{ style: 'solid', pts: [[80,70],[63,84]] },
+                     { style: 'fake',  pts: [[63,84],[31,84]] }] },
+        QB: { say: 'Catch the snap, FAKE the handoff to the Runner, then throw it {R} to him.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'FAKE like you are taking the handoff, then slip out and cut {R}. Catch the ball!',
+              ballCarrier: true,
+              segs: [{ style: 'fake',  pts: [[50,85],[57,77]] },
+                     { style: 'solid', pts: [[57,77],[57,58],[75,58]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'RB', kind:'throw' } ]
+    },
+
+    {
+      id: 'fakedive', nameTpl: 'Fake Dive WR Pass {D}', dir: 'Left', type: 'pass', level: 3,
+      coach: 'Fake the Dive, throw to the Catcher.',
+      assignments: {
+        C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
+              segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
+        WL: { say: 'Run up the field, then cut IN toward the middle. Catch the ball!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[20,70],[20,48],[37,48]] }] },
+        WR: { say: 'Run across behind everybody, then go up the field on the {L}.',
+              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[29,65]] }] },
+        QB: { say: 'Catch the snap, FAKE the dive to the Runner, then throw it {L}.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'FAKE like you are taking the ball, then run straight down the field.',
+              segs: [{ style: 'fake',  pts: [[50,85],[58,76]] },
+                     { style: 'solid', pts: [[58,76],[58,30]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'WL', kind:'throw' } ]
+    },
+
+    {
+      /* "C Pass" = a pass to the Center. */
+      id: 'fakesweepc', nameTpl: 'Fake Sweep {D} C Pass', dir: 'Left', type: 'pass', level: 3,
+      coach: 'Fake the Sweep, throw to the Snapper.',
+      assignments: {
+        C:  { say: 'Snap the ball, run straight up, then cut to the {R}. The ball is coming to YOU!',
+              ballCarrier: true,
+              segs: [{ style: 'solid', pts: [[50,70],[50,52],[75,52]] }] },
+        WL: { say: 'Run up the field, then cut IN toward the middle.',
+              segs: [{ style: 'solid', pts: [[20,70],[20,48],[37,48]] }] },
+        WR: { say: 'Run across behind everybody like you are getting the ball on a sweep.',
+              segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[29,64]] }] },
+        QB: { say: 'Catch the snap, FAKE the handoff to the Runner, then throw it {R} to the Snapper.',
+              segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
+        RB: { say: 'FAKE like you are taking the ball, then run straight down the field.',
+              segs: [{ style: 'fake',  pts: [[50,85],[58,76]] },
+                     { style: 'solid', pts: [[58,76],[58,28]] }] }
+      },
+      ball: [ { from:'C', to:'QB', kind:'snap' }, { from:'QB', to:'C', kind:'throw' } ]
+    }
+  ];
+
+  /* ---------------------------------------------------------------- utils */
+
+  var OPP = { Left: 'Right', Right: 'Left' };
+
+  /* Render {L} {R} {D} tokens. When flipped, L and R trade places. */
+  function text(str, play) {
+    if (!str) return '';
+    var l = play.flipped ? 'RIGHT' : 'LEFT';
+    var r = play.flipped ? 'LEFT'  : 'RIGHT';
+    return str.replace(/\{L\}/g, l)
+              .replace(/\{R\}/g, r)
+              .replace(/\{D\}/g, dir(play));
+  }
+
+  function dir(play) {
+    return play.flipped ? OPP[play.dir] : play.dir;
+  }
+
+  function name(play) {
+    return play.nameTpl.replace(/\{D\}/g, dir(play));
+  }
+
+  /* A flipped play is the same object with flipped:true. All the geometry and
+     wording swaps happen at read time, so there is only ever one source of
+     truth per play. */
+  function flip(play) {
+    var copy = Object.create(play);
+    copy.flipped = !play.flipped;
+    return copy;
+  }
+
+  function mirrorPts(pts) {
+    return pts.map(function (p) { return [100 - p[0], p[1]]; });
+  }
+
+  var SWAP_SIDE = { WL: 'WR', WR: 'WL', C: 'C', QB: 'QB', RB: 'RB' };
+
+  /* The assignment a given POSITION runs on this play.
+     Flipping trades the two receivers, because a kid who lines up on the right
+     stays on the right -- the play comes to him instead. */
+  function assignment(play, posKey) {
+    var srcKey = play.flipped ? SWAP_SIDE[posKey] : posKey;
+    var a = play.assignments[srcKey];
+    if (!a) return null;
+    return {
+      pos: posKey,
+      say: text(a.say, play),
+      ballCarrier: !!a.ballCarrier,
+      hasFake: a.segs.some(function (s) { return s.style === 'fake'; }),
+      segs: a.segs.map(function (s) {
+        return { style: s.style, pts: play.flipped ? mirrorPts(s.pts) : s.pts };
+      })
+    };
+  }
+
+  function ballEvents(play) {
+    return play.ball.map(function (e) {
+      return {
+        from: play.flipped ? SWAP_SIDE[e.from] : e.from,
+        to:   play.flipped ? SWAP_SIDE[e.to]   : e.to,
+        kind: e.kind
+      };
+    });
+  }
+
+  /* Who ends up with the ball, as a position key. */
+  function carrier(play) {
+    var found = null;
+    Positions.keys.forEach(function (k) {
+      var a = assignment(play, k);
+      if (a && a.ballCarrier) found = k;
+    });
+    return found;
+  }
+
+  /* Every play in both directions: 8 shapes -> 16 calls. */
+  function all(includeFlipped) {
+    var out = [];
+    LIST.forEach(function (p) {
+      out.push(p);
+      if (includeFlipped) out.push(flip(p));
+    });
+    return out;
+  }
+
+  function byId(id) {
+    return LIST.filter(function (p) { return p.id === id; })[0];
+  }
+
+  return {
+    list: LIST, all: all, byId: byId,
+    flip: flip, name: name, dir: dir, text: text,
+    assignment: assignment, ballEvents: ballEvents, carrier: carrier,
+    LOS: LOS
+  };
+})();

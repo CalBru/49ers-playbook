@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#AA0000">
+<title>49ers Playbook</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127944;</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="appbar">
+  <button class="appbar__back" id="backBtn" aria-label="Go back" hidden>&#8592;</button>
+  <button class="appbar__home" id="homeBtn" aria-label="Home">&#127944;</button>
+  <h1 class="appbar__title" id="appTitle">49ers Playbook</h1>
+  <button class="poschip" id="posChip" aria-haspopup="dialog">
+    <span class="poschip__dot" id="posChipDot"></span>
+    <span class="poschip__label" id="posChipLabel">Pick a spot</span>
+    <span class="poschip__caret">&#9662;</span>
+  </button>
+</header>
+
+<main id="main">
+
+  <!-- HOME -->
+  <section class="screen" id="screen-home">
+    <h2 class="big-q">Who are you today?</h2>
+    <div class="poscards" id="homePosCards"></div>
+    <div class="menu">
+      <button class="menu__btn menu__btn--plays" data-go="plays">
+        <span class="menu__icon">&#128203;</span>
+        <span class="menu__text"><b>Learn the Plays</b><i>See what you do</i></span>
+      </button>
+      <button class="menu__btn menu__btn--drills" data-go="drills">
+        <span class="menu__icon">&#128264;</span>
+        <span class="menu__text"><b>Coach Calls It</b><i>Know the play names</i></span>
+      </button>
+      <button class="menu__btn menu__btn--quiz" data-go="quiz">
+        <span class="menu__icon">&#11088;</span>
+        <span class="menu__text"><b>Play the Game</b><i>Earn stars</i></span>
+      </button>
+      <button class="menu__btn menu__btn--pos" data-go="positions">
+        <span class="menu__icon">&#129351;</span>
+        <span class="menu__text"><b>The Positions</b><i>What each spot does</i></span>
+      </button>
+    </div>
+    <p class="stars-line" id="homeStars"></p>
+  </section>
+
+  <!-- PLAY LIST -->
+  <section class="screen" id="screen-plays" hidden>
+    <div class="playlist" id="playList"></div>
+  </section>
+
+  <!-- SINGLE PLAY -->
+  <section class="screen screen--play" id="screen-play" hidden>
+    <div class="playhead">
+      <h2 class="playname" id="playName">&nbsp;</h2>
+      <button class="speak" id="playNameSpeak" aria-label="Say the play name">&#128264;</button>
+    </div>
+    <div class="playwrap">
+      <div class="fieldbox">
+        <svg id="fieldSvg" viewBox="0 20 100 78" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+      </div>
+      <div class="jobbox">
+        <div class="job" id="jobCard">
+          <p class="job__text" id="jobText"></p>
+          <button class="speak speak--big" id="jobSpeak" aria-label="Read it out loud">&#128264;</button>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="justMe" checked>
+          <span class="toggle__track"><span class="toggle__thumb"></span></span>
+          <span class="toggle__label">Just show me</span>
+        </label>
+      </div>
+    </div>
+    <div class="actionbar">
+      <button class="act act--flip" id="flipBtn">&#8646; Flip</button>
+      <button class="act act--hike" id="hikeBtn">HIKE!</button>
+      <button class="act act--slow" id="slowBtn">&#128034; Slow</button>
+    </div>
+  </section>
+
+  <!-- DRILLS -->
+  <section class="screen" id="screen-drills" hidden>
+    <div id="drillHost"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="screen-quiz" hidden>
+    <div id="quizHost"></div>
+  </section>
+
+  <!-- POSITIONS -->
+  <section class="screen" id="screen-positions" hidden>
+    <div class="poslist" id="posList"></div>
+  </section>
+
+</main>
+
+<!-- POSITION SWITCHER SHEET -->
+<div class="sheet" id="posSheet" hidden>
+  <div class="sheet__scrim" data-close></div>
+  <div class="sheet__panel" role="dialog" aria-label="Pick your position">
+    <h3 class="sheet__title">Which spot are you playing?</h3>
+    <div class="poscards poscards--sheet" id="sheetPosCards"></div>
+    <button class="sheet__random" id="randomPos">&#127922; Surprise me</button>
+    <button class="sheet__close" data-close>Close</button>
+  </div>
+</div>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script src="js/positions.js"></script>
+<script src="js/plays.js"></script>
+<script src="js/field.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/drills.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
