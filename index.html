@@ -18,21 +18,23 @@
     <button class="appbar__mute" id="muteBtn" aria-label="Turn sound off">&#128266;</button>
   </header>
 
-  <!-- Always visible, on every screen. Swapping spots is the thing these boys
-       do most, so it is a permanent control rather than a menu. -->
-  <nav class="posbar" id="posBar" aria-label="Pick your position">
-    <div class="posbar__lead">
-      <span class="posbar__label" id="posBarLabel">Who are you today?</span>
-      <button class="posbar__dice" id="randomPos" aria-label="Pick one for me">&#127922;</button>
-    </div>
-    <div class="posbar__row" id="posBarRow"></div>
-  </nav>
 </div>
+
+<!-- Lives inside whichever screen is showing, moved into that screen's slot so
+     it sits next to the thing it changes -- under the play, above a drill. -->
+<nav class="posbar" id="posBar" aria-label="Pick your position">
+  <div class="posbar__lead">
+    <span class="posbar__label" id="posBarLabel">Who are you today?</span>
+    <button class="posbar__dice" id="randomPos" aria-label="Pick one for me">&#127922;</button>
+  </div>
+  <div class="posbar__row" id="posBarRow"></div>
+</nav>
 
 <main id="main">
 
   <!-- HOME -->
   <section class="screen" id="screen-home">
+    <div class="posslot" id="slot-home"></div>
     <div class="menu">
       <button class="menu__btn menu__btn--plays" data-go="plays">
         <span class="menu__icon">&#128203;</span>
@@ -56,6 +58,7 @@
 
   <!-- PLAY LIST -->
   <section class="screen" id="screen-plays" hidden>
+    <div class="posslot" id="slot-plays"></div>
     <div class="playlist" id="playList"></div>
   </section>
 
@@ -76,6 +79,7 @@
         </div>
       </div>
     </div>
+    <div class="posslot" id="slot-play"></div>
     <div class="actionbar">
       <button class="act act--flip" id="flipBtn">&#8646; Other way</button>
       <button class="act act--hike" id="hikeBtn">HIKE!</button>
@@ -84,11 +88,13 @@
 
   <!-- DRILLS -->
   <section class="screen" id="screen-drills" hidden>
+    <div class="posslot" id="slot-drills"></div>
     <div id="drillHost"></div>
   </section>
 
   <!-- QUIZ -->
   <section class="screen" id="screen-quiz" hidden>
+    <div class="posslot" id="slot-quiz"></div>
     <div id="quizHost"></div>
   </section>
 

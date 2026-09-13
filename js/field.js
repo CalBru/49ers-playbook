@@ -178,8 +178,12 @@ var Field = (function () {
       if (e.kind === 'snap') {
         e.t0 = t; e.t1 = t + 0.08;
       } else if (e.kind === 'throw') {
-        e.t0 = Math.max(t + 0.04, 0.46);      // let the route develop first
-        e.t1 = e.t0 + 0.26;
+        /* Work backwards from the catch. The ball should ARRIVE as the receiver
+           reaches the end of his route -- throwing on a fixed clock released it
+           while he was still in the backfield, which looked badly early. */
+        var LAND = 0.93, FLIGHT = 0.22;
+        e.t0 = Math.max(t + 0.04, LAND - FLIGHT);
+        e.t1 = LAND;
       } else {
         var lo = Math.max(t + 0.02, 0.13), hi = 0.72, best = lo, bestD = Infinity;
         for (var p = lo; p <= hi; p += 0.01) {

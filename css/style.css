@@ -25,6 +25,7 @@ h2,h3{margin:0}
 
 /* ------------------------------------------------------------------ appbar */
 .top{position:sticky;top:0;z-index:30;border-bottom:3px solid var(--gold)}
+.top > .appbar{max-width:900px;margin:0 auto}
 .appbar{
   display:flex;align-items:center;gap:8px;
   padding:10px var(--pad);background:linear-gradient(180deg,var(--scarlet),#8B0000);
@@ -39,11 +40,16 @@ h2,h3{margin:0}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 /* -------------------------------------------------------- position bar */
-.posbar{padding:8px var(--pad) 10px;background:#12171F;border-top:1px solid rgba(255,255,255,.06)}
-.posbar__lead{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.posslot:empty{display:none}
+.posbar{padding:11px 12px 12px;margin:16px 0 0;background:#12171F;
+  border:2px solid var(--line);border-radius:var(--r)}
+#screen-play .posbar{margin-top:14px}
+#screen-home .posbar{margin:0 0 18px}
+.posbar__lead{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+/* Wraps rather than truncating -- "Wide Receiver Right (The Catcher)" is long
+   and cutting it mid-word looked broken. */
 .posbar__label{flex:1;min-width:0;font-size:13px;font-weight:800;letter-spacing:.4px;
-  text-transform:uppercase;color:var(--ink-dim);white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis}
+  text-transform:uppercase;color:var(--ink-dim);line-height:1.3}
 .posbar__dice{width:34px;height:34px;flex:0 0 auto;border-radius:10px;font-size:17px;
   background:var(--card-2);border:2px solid var(--line);display:grid;place-items:center}
 .posbar__row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
@@ -61,7 +67,7 @@ h2,h3{margin:0}
 .posbtn:active{transform:scale(.94)}
 
 /* Until a spot is chosen, the bar asks for one rather than sitting quietly. */
-.posbar.is-empty{background:color-mix(in srgb,var(--gold) 14%,#12171F)}
+.posbar.is-empty{background:color-mix(in srgb,var(--gold) 14%,#12171F);border-color:var(--gold)}
 .posbar.is-empty .posbar__label{color:var(--gold-lt);animation:leadPulse 1.8s ease-in-out infinite}
 @keyframes leadPulse{0%,100%{opacity:1}50%{opacity:.45}}
 
@@ -252,8 +258,6 @@ h2,h3{margin:0}
 .cue__jobtxt{display:block;font-size:19px;font-weight:750;line-height:1.35}
 .cue__jobtxt b{color:var(--gold-lt)}
 .cue__jobtxt .fakeword{color:#F5A524;font-weight:900}
-.cue__warn{display:block;margin-top:9px;padding-top:9px;font-size:16px;font-weight:800;
-  color:var(--gold-lt);border-top:1px solid var(--line)}
 .cue__text b{color:var(--gold-lt)}
 .cue__text .fakeword{color:#F5A524;font-weight:900}
 .cue__row{display:flex;gap:10px}
@@ -273,7 +277,6 @@ h2,h3{margin:0}
 
 /* ------------------------------------------------------- tablet + desktop */
 @media (min-width:760px){
-  .posbar{max-width:900px;margin:0 auto;width:100%}
   .posbar__row{gap:10px}
   .posbtn{flex-direction:row;gap:9px;padding:8px 10px;justify-content:center}
   .posbtn__lbl{font-size:13px}

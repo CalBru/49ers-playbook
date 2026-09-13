@@ -47,6 +47,7 @@ var App = (function () {
       if (elm) elm.hidden = (s !== name);
     });
     $('appTitle').textContent = TITLES[name] || '';
+    mountPosBar(name);
     /* Back and Home are redundant everywhere except the play view, and the
        title needs the room on a phone. */
     $('backBtn').hidden = (name === 'home');
@@ -106,6 +107,14 @@ var App = (function () {
              '</button>';
     }).join('');
     syncPosBar();
+  }
+
+  /* Move the one bar into the showing screen, so it sits beside what it
+     changes rather than floating in the header away from the play. */
+  function mountPosBar(screen) {
+    var slot = $('slot-' + screen);
+    if (slot) slot.appendChild($('posBar'));
+    $('posBar').hidden = !slot;
   }
 
   function syncPosBar() {
@@ -207,9 +216,7 @@ var App = (function () {
     var a = Plays.assignment(p, state.pos);
     card.style.setProperty('--pc', Positions.color(state.pos));
     txt.className = 'job__text';
-    txt.innerHTML = emphasise(a.say) +
-      (p.heads_up ? '<br><b style="color:var(--gold-lt)">⚠️ ' +
-        Plays.text(p.heads_up, p) + '</b>' : '');
+    txt.innerHTML = emphasise(a.say);
     $('jobSpeak').hidden = !Speech.enabled();
     $('jobSpeak').onclick = function () { Speech.say(a.say); };
   }
@@ -242,8 +249,7 @@ var App = (function () {
     $('cueJob').hidden = !opts.job;
     if (opts.job) {
       $('cueJobLbl').textContent = opts.jobLabel;
-      $('cueJobTxt').innerHTML   = emphasise(opts.job) +
-        (opts.warn ? '<span class="cue__warn">⚠️ ' + emphasise(opts.warn) + '</span>' : '');
+      $('cueJobTxt').innerHTML   = emphasise(opts.job);
     }
 
     $('cueGo').textContent = opts.goLabel || 'Got it — show me ▶';
@@ -275,14 +281,12 @@ var App = (function () {
   function showPosCue() {
     var p = current(), a = Plays.assignment(p, state.pos);
     if (!a) return;
-    var warn = p.heads_up ? Plays.text(p.heads_up, p) : null;
     openCue({
       kicker: Plays.name(p),
-      job: a.say, warn: warn,
+      job: a.say,
       jobLabel: 'Your job — ' + Positions.shortName(state.pos),
       colour: Positions.color(state.pos),
-      say: 'You are the ' + Positions.shortName(state.pos) + '. ' + a.say +
-           (warn ? ' ' + warn : ''),
+      say: 'You are the ' + Positions.shortName(state.pos) + '. ' + a.say,
       goLabel: 'Got it — show me ▶'
     });
   }
@@ -349,10 +353,12 @@ var App = (function () {
     $('cueGo').addEventListener('click', function () { hideCue(true); });
     document.querySelector('[data-cue-close]')
             .addEventListener('click', function () { hideCue(false); });
+    /* A flipped play is a different call with a different name, so it gets
+       introduced like any other play rather than silently redrawing. */
     $('flipBtn').addEventListener('click', function () {
       view.flipped = !view.flipped;
       paintPlay();
-      Speech.callPlay(Plays.spoken(current()));
+      showPlayBrief();
     });
     $('playNameSpeak').addEventListener('click', function () {
       Speech.callPlay(Plays.spoken(current()));

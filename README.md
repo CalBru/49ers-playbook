@@ -19,10 +19,10 @@ Works on a phone, an iPad, or a computer. No app to install.
   are you faking or do you really get it. Earns stars.
 - **The Positions** — what each of the five spots does.
 
-Picking a position is optional. Five numbered buttons sit under the header on
-every screen — the numbers match the ones on the field — so swapping spots is one
-tap from anywhere, and the bar highlights itself until a spot is chosen. Nothing
-asks you to commit before you've seen anything.
+Picking a position is optional. Five numbered buttons sit inside each screen —
+directly under the play, where the job they change is — with numbers matching the
+ones on the field. The bar highlights itself until a spot is chosen. Nothing asks
+you to commit before you've seen anything.
 
 Swapping position while looking at a play brings up your new assignment and reads
 it out, so a changed job gets noticed rather than silently happening.
@@ -58,9 +58,9 @@ id: 'rbpass', nameTpl: 'Running Back Pass {D}', spokenTpl: 'R B Pass {D}',
 ```
 
 > **Heads up on Reverse Right:** the name says Right but the ball finishes going
-> **left** — the Runner starts right, then hands it back. The app never lets a kid
-> guess direction from a play name; every instruction says the direction outright,
-> and the Reverse plays carry an extra warning in the drills.
+> **left** — the Running Back starts right, then hands it back. Nothing in the app
+> lets a kid guess direction from a play name; the steps and every instruction say
+> the direction outright.
 
 ## How the diagrams work
 
@@ -74,7 +74,9 @@ Same language as the laminated cards:
 | **Solid** | A real route or run, without the ball. Drawn in that player's colour. |
 
 A handoff is timed to the moment the two players are actually closest, so the
-ball changes hands where they meet and stays flat. Only a thrown ball arcs.
+ball changes hands where they meet and stays flat. A throw is timed backwards
+from the catch, leaving the passer's hand when the receiver is most of the way
+through his route so it lands as he arrives. Only a thrown ball arcs.
 
 The one thing worth knowing: **Sweep Left** and **Reverse Right** look almost
 identical, but on Sweep the Runner's line is *dotted* (he's faking — the ball goes
