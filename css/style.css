@@ -51,8 +51,9 @@ h2,h3{margin:0}
   border-radius:14px;border:2px solid transparent;background:var(--card);min-height:var(--tap)}
 .posbtn__num{width:32px;height:32px;border-radius:50%;background:var(--c);color:#08111C;
   font-weight:900;font-size:16px;display:grid;place-items:center;opacity:.5;transition:.15s}
-.posbtn__lbl{font-size:10.5px;font-weight:700;color:var(--ink-dim);line-height:1.1;
+.posbtn__lbl{font-size:10.5px;font-weight:700;color:var(--ink-dim);line-height:1.15;
   text-align:center}
+.lbl-wide{display:none}
 .posbtn.is-on{border-color:var(--c);background:color-mix(in srgb,var(--c) 20%,var(--card))}
 .posbtn.is-on .posbtn__num{opacity:1;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent)}
 .posbtn.is-on .posbtn__lbl{color:var(--ink)}
@@ -231,7 +232,7 @@ h2,h3{margin:0}
 @media (min-width:760px){
   .posbar{max-width:900px;margin:0 auto;width:100%}
   .posbar__row{gap:10px}
-  .posbtn{flex-direction:row;gap:9px;padding:8px 12px;justify-content:center}
+  .posbtn{flex-direction:row;gap:9px;padding:8px 10px;justify-content:center}
   .posbtn__lbl{font-size:13px}
   .menu{grid-template-columns:1fr 1fr}
   .playlist{grid-template-columns:1fr 1fr}
@@ -250,6 +251,14 @@ h2,h3{margin:0}
   .jobbox{margin-top:0}
   #fieldSvg{max-height:calc(100vh - 250px)}
   .fieldbox{display:grid;place-items:center}
+}
+
+/* Only swap in the full position names once they fit on a single line --
+   below this they wrap raggedly and the bar grows taller than it is worth. */
+@media (min-width:1000px){
+  .lbl-wide{display:inline}
+  .lbl-narrow{display:none}
+  .posbtn__lbl{white-space:nowrap}
 }
 
 @media (prefers-reduced-motion:reduce){

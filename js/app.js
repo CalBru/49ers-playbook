@@ -67,8 +67,13 @@ var App = (function () {
       return '<button class="posbtn' + (p.key === state.pos ? ' is-on' : '') + '"' +
              ' data-pos="' + p.key + '" style="--c:' + p.color + '">' +
                '<span class="posbtn__num">' + p.num + '</span>' +
-               '<span class="posbtn__lbl">' + p.nick.replace(/^The /, '') +
-                 (p.side ? ' ' + p.side.charAt(0) : '') + '</span>' +
+               /* Real position names. The full one where there is room, a
+                  slightly shorter real name on a phone -- never the nickname,
+                  which belongs on the Positions screen. */
+               '<span class="posbtn__lbl">' +
+                 '<span class="lbl-wide">' + p.name + (p.side ? ' ' + p.side : '') + '</span>' +
+                 '<span class="lbl-narrow">' + Positions.shortName(p.key) + '</span>' +
+               '</span>' +
              '</button>';
     }).join('');
     syncPosBar();
