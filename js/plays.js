@@ -31,8 +31,8 @@ var Plays = (function () {
       id: 'dive', nameTpl: 'Dive {D}', dir: 'Right', type: 'run', level: 1,
       coach: 'Straight ahead, right up the gut.',
       about: 'The fastest play. No tricks!',
-      steps: ['Quarterback hands off to the Running Back.',
-              'The {WR} runs across and FAKES.',
+      steps: ['Quarterback gives the ball to the Running Back.',
+              'The {WR} runs by and pretends to take it.',
               'The Running Back runs up the {R} side!'],
       assignments: {
         C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around and come back for it.',
@@ -55,10 +55,10 @@ var Plays = (function () {
     {
       id: 'sweep', nameTpl: 'Sweep {D}', dir: 'Left', type: 'run', level: 1,
       coach: 'Wide around the outside.',
-      about: 'Run around the outside, not up the middle.',
+      about: 'Run way around the outside!',
       steps: ['The {WR} runs across behind everybody.',
-              'He takes the ball from the Quarterback.',
-              'Then he runs wide around the {L}!'],
+              'Quarterback gives him the ball.',
+              'He runs way around the {L} side!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
@@ -82,10 +82,10 @@ var Plays = (function () {
          The steps above spell that out, so no separate warning is needed. */
       id: 'reverse', nameTpl: 'Reverse {D}', dir: 'Right', type: 'run', level: 2,
       coach: 'Starts one way, goes the other.',
-      about: 'A trick! The ball goes back the other way.',
+      about: 'A trick! The Running Back GIVES the ball away.',
       steps: ['Running Back takes the ball and goes {R}.',
               'The {WR} takes it from him.',
-              'Now that Receiver runs the other way, {L}!'],
+              'Now he runs the other way, {L}!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
@@ -112,7 +112,7 @@ var Plays = (function () {
          Plays 'reverse' and 'fakereverse' look identical until the mesh point. */
       id: 'fakereverse', nameTpl: 'Fake Reverse {D}', dir: 'Right', type: 'run', level: 2,
       coach: 'Looks just like Reverse — but the Running Back keeps it.',
-      about: 'Looks like Reverse — but it is a fake!',
+      about: 'Looks the same — but he KEEPS the ball!',
       steps: ['Running Back takes the ball and goes {R}.',
               'The {WR} only PRETENDS to take it.',
               'The Running Back keeps it and runs {R}!'],
@@ -139,8 +139,8 @@ var Plays = (function () {
       coach: 'Looks like Sweep — then the Wide Receiver throws it.',
       about: 'Looks like Sweep — then a throw!',
       steps: ['The Center snaps, then runs {L}.',
-              'The {WR} takes the ball and runs {L}.',
-              'He stops and throws it to the Center!'],
+              'Quarterback gives the ball to the {WR}.',
+              'He runs {L}, stops, and throws to the Center!'],
       assignments: {
         C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around. The ball is coming to YOU!',
               ballCarrier: true,
@@ -164,8 +164,8 @@ var Plays = (function () {
          it. Spelled out here because the drill reads the name out loud. */
       id: 'rbpass', nameTpl: 'Running Back Pass {D}', dir: 'Right', type: 'pass', level: 3,
       coach: 'Fake it to the Running Back, then throw it to him.',
-      about: 'A fake handoff, then a pass to the Running Back!',
-      steps: ['Quarterback FAKES a handoff to the Running Back.',
+      about: 'A fake, then a throw to the Running Back!',
+      steps: ['Quarterback PRETENDS to give it to the Running Back.',
               'The Running Back sneaks out to the {R}.',
               'Quarterback throws it to him!'],
       assignments: {
@@ -190,8 +190,8 @@ var Plays = (function () {
       id: 'fakedive', nameTpl: 'Fake Dive Receiver Pass {D}', dir: 'Left', type: 'pass', level: 3,
       coach: 'Fake the Dive, throw to the Wide Receiver.',
       about: 'Fake a run, then throw it.',
-      steps: ['Quarterback FAKES a handoff to the Running Back.',
-              'The {WL} runs up, then cuts to the middle.',
+      steps: ['Quarterback PRETENDS to give it to the Running Back.',
+              'The {WL} runs, then turns to the middle.',
               'Quarterback throws it to him!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
@@ -215,9 +215,9 @@ var Plays = (function () {
       id: 'fakesweepc', nameTpl: 'Fake Sweep {D} Center Pass', dir: 'Left', type: 'pass', level: 3,
       coach: 'Fake the Sweep, throw to the Center.',
       about: 'Fake the Sweep — then throw to the Center!',
-      steps: ['The {WR} runs across like a Sweep.',
-              'Quarterback FAKES a handoff, then throws {R}.',
-              'The Center cuts {R} and catches it!'],
+      steps: ['The Center snaps, runs up, then turns {R}.',
+              'The {WR} runs across like a Sweep.',
+              'Quarterback FAKES, then throws to the Center!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}. The ball is coming to YOU!',
               ballCarrier: true,
