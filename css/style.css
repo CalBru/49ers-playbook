@@ -202,6 +202,11 @@ h2,h3{margin:0}
 .choices--arrows .choice span{display:block;font-size:30px;margin-bottom:2px}
 .bigsound{width:100%;min-height:88px;border-radius:var(--r);background:var(--card-2);
   border:3px solid var(--gold);font-size:19px;font-weight:800;margin-bottom:6px}
+/* Compact repeat button for questions that already have a field below them. */
+.sayagain{min-height:48px;padding:0 18px;margin:0 0 14px;border-radius:14px;
+  background:var(--card-2);border:2px solid var(--gold);color:var(--gold-lt);
+  font-weight:800;font-size:15px}
+.sayagain:active{transform:scale(.96)}
 .bigsound span{font-size:34px;display:block}
 .drill__field{border-radius:var(--r);overflow:hidden;border:2px solid var(--line);
   background:#0A1F13;margin:6px 0 4px}

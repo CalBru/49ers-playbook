@@ -154,6 +154,9 @@ var Drills = (function () {
         '<div id="ch"></div><p class="feedback"></p>' +
       '</div>';
     var svg = host.querySelector('svg');
+    /* Spoken too, but carefully: naming the play would give the answer away,
+       so only the instruction is read. */
+    Speech.say('Watch the play. Then tell me which play it was.');
     var run = function () { Field.render(svg, p, { focus: App.pos, animate: true }); };
     host.querySelector('#again').addEventListener('click', run);
     host.querySelector('#ch').appendChild(choiceBtns(q, name, function (r) {

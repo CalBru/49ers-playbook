@@ -12,6 +12,21 @@ var Quiz = (function () {
 
   function shuffle(a) { return Drills.shuffle(a); }
 
+  /* Every question is asked out loud -- the play name the way Coach calls it,
+     then the question itself. One utterance, because Speech.say cancels
+     whatever is already speaking. A button repeats it. */
+  function ask(play, question, hint) {
+    var line = Plays.spoken(play) + '. ' + question + (hint ? ' ' + hint : '');
+    var btn = host.querySelector('#qSay');
+    if (btn) {
+      btn.hidden = !Speech.enabled();
+      btn.onclick = function () { Speech.say(line); };
+    }
+    Speech.say(line);
+  }
+
+  var SAY_BTN = '<button class="sayagain" id="qSay">🔊 Say it again</button>';
+
   /* Level 1 from the start; the rest open up as stars come in. */
   function unlockedLevel() {
     var n = App.starCount();
@@ -115,11 +130,13 @@ var Quiz = (function () {
       '<div class="drill">' + pips() +
         '<p class="drill__kicker">' + name + '</p>' +
         '<h2 class="drill__q">Who ends up with the ball?</h2>' +
-        '<p class="drill__hint">Tap the player on the field.</p>' +
+        '<p class="drill__hint">Tap the player on the field.</p>' + SAY_BTN +
         '<div class="drill__field"><svg viewBox="0 20 100 78" ' +
           'preserveAspectRatio="xMidYMid meet"></svg></div>' +
         '<p class="feedback"></p>' +
       '</div>';
+
+    ask(p, 'Who ends up with the ball?', 'Tap the player on the field.');
 
     var svg = host.querySelector('svg');
     var api = Field.render(svg, p, { focus: null, animate: false });
@@ -152,13 +169,15 @@ var Quiz = (function () {
     host.innerHTML =
       '<div class="drill">' + pips() +
         '<p class="drill__kicker">' + Plays.name(p) + ' · you are the ' + Positions.shortName(me) + '</p>' +
-        '<h2 class="drill__q">Do you really get the ball?</h2>' +
+        '<h2 class="drill__q">Do you really get the ball?</h2>' + SAY_BTN +
         '<div class="choices choices--2" id="ch">' +
           '<button class="choice" data-v="1">🏈 I really get it</button>' +
           '<button class="choice" data-v="0">🤫 I am just FAKING</button>' +
         '</div>' +
         '<p class="feedback"></p>' +
       '</div>';
+
+    ask(p, 'You are the ' + Positions.shortName(me) + '. Do you really get the ball?');
 
     host.querySelectorAll('#ch .choice').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -222,11 +241,14 @@ var Quiz = (function () {
       '<div class="drill">' + pips() +
         '<p class="drill__kicker">' + Plays.name(p) + ' · you are the ' + Positions.shortName(me) + '</p>' +
         '<h2 class="drill__q">Where do you finish up?</h2>' +
-        '<p class="drill__hint">Tap one of the three spots.</p>' +
+        '<p class="drill__hint">Tap one of the three spots.</p>' + SAY_BTN +
         '<div class="drill__field"><svg viewBox="0 20 100 78" ' +
           'preserveAspectRatio="xMidYMid meet"></svg></div>' +
         '<p class="feedback"></p>' +
       '</div>';
+
+    ask(p, 'You are the ' + Positions.shortName(me) + '. Where do you finish up?',
+        'Tap one of the three spots.');
 
     var svg = host.querySelector('svg');
     Field.render(svg, p, { focus: me, animate: false });

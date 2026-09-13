@@ -28,8 +28,9 @@ you to commit before you've seen anything.
 Swapping position while looking at a play brings up your new assignment and reads
 it out, so a changed job gets noticed rather than silently happening.
 
-Everything is read aloud. The speaker button in the header turns that off and
-remembers the choice.
+Everything is read aloud — instructions, play names, and every quiz question,
+each with a button to hear it again. The speaker button in the header turns that
+off and remembers the choice.
 
 The animation runs deliberately slowly. Six-year-olds can't follow five routes at
 game speed, and a learning tool has no reason to run at one.
