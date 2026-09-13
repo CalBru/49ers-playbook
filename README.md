@@ -9,7 +9,8 @@ Works on a phone, an iPad, or a computer. No app to install.
 
 ## What's in it
 
-- **Learn the Plays** — all 8 plays animated. Tap `HIKE!` and watch it happen.
+- **Learn the Plays** — opening a play explains what it is first, in three short
+  steps, then you watch it. Tap `HIKE!` to run it again.
   `Other way` mirrors the play left/right. Once you've picked a spot, your own
   route is the bright one and everyone else fades back.
 - **Coach Calls It** — two drills. *Hear it, do it*: Coach calls a play, you say
@@ -22,6 +23,12 @@ Picking a position is optional. Five numbered buttons sit under the header on
 every screen — the numbers match the ones on the field — so swapping spots is one
 tap from anywhere, and the bar highlights itself until a spot is chosen. Nothing
 asks you to commit before you've seen anything.
+
+Swapping position while looking at a play brings up your new assignment and reads
+it out, so a changed job gets noticed rather than silently happening.
+
+Everything is read aloud. The speaker button in the header turns that off and
+remembers the choice.
 
 The animation runs deliberately slowly. Six-year-olds can't follow five routes at
 game speed, and a learning tool has no reason to run at one.
@@ -86,6 +93,9 @@ route as a list of points.
   when the play is mirrored. `{D}` in a play name is that play's own direction.
 - Set `ballCarrier: true` on whoever ends up with the ball. That's the red route.
 - Flipping a play is just `x → 100 - x`, so you never draw a play twice.
+- `about` is the one-line point of the play and `steps` are the two or three
+  short beats shown when you open it. Keep them short — they are for a
+  six-year-old, and long ones turn the card into a wall of text.
 
 What each position *does* on a play — run it, catch it, throw it, hand it off,
 fake it, or just run a route — is worked out from the routes and the ball events

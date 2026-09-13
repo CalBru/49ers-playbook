@@ -15,6 +15,7 @@
     <button class="appbar__back" id="backBtn" aria-label="Go back" hidden>&#8592;</button>
     <button class="appbar__home" id="homeBtn" aria-label="Home">&#127944;</button>
     <h1 class="appbar__title" id="appTitle">49ers Playbook</h1>
+    <button class="appbar__mute" id="muteBtn" aria-label="Turn sound off">&#128266;</button>
   </header>
 
   <!-- Always visible, on every screen. Swapping spots is the thing these boys
@@ -97,6 +98,25 @@
   </section>
 
 </main>
+
+<!-- Shown when you change position while looking at a play: your job just
+     changed, so read and hear it before watching the play again. -->
+<div class="cue" id="cue" hidden>
+  <div class="cue__scrim" data-cue-close></div>
+  <div class="cue__panel" role="dialog" aria-live="polite">
+    <p class="cue__who" id="cueWho"></p>
+    <p class="cue__text" id="cueText"></p>
+    <ol class="cue__steps" id="cueSteps" hidden></ol>
+    <div class="cue__job" id="cueJob" hidden>
+      <span class="cue__joblbl" id="cueJobLbl"></span>
+      <span class="cue__jobtxt" id="cueJobTxt"></span>
+    </div>
+    <div class="cue__row">
+      <button class="cue__speak" id="cueSpeak" aria-label="Say it again">&#128264;</button>
+      <button class="cue__go" id="cueGo">Got it &mdash; show me &#9654;</button>
+    </div>
+  </div>
+</div>
 
 <div class="confetti" id="confetti" aria-hidden="true"></div>
 

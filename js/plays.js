@@ -30,6 +30,10 @@ var Plays = (function () {
     {
       id: 'dive', nameTpl: 'Dive {D}', dir: 'Right', type: 'run', level: 1,
       coach: 'Straight ahead, right up the gut.',
+      about: 'The fastest play. No tricks!',
+      steps: ['Center snaps it.',
+              'Quarterback hands it to the Running Back.',
+              'He runs straight up the {R} side!'],
       assignments: {
         C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around and come back for it.',
               segs: [{ style: 'solid', pts: [[50,70],[38,52],[41,58]] }] },
@@ -39,7 +43,7 @@ var Plays = (function () {
               segs: [{ style: 'solid', pts: [[80,70],[63,84]] },
                      { style: 'fake',  pts: [[63,84],[43,84]] },
                      { style: 'solid', pts: [[43,84],[31,63]] }] },
-        QB: { say: 'Catch the snap, fake it to the Catcher running by, then hand it to the Runner.',
+        QB: { say: 'Catch the snap, fake it to the Wide Receiver running by, then hand it to the Running Back.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'Take the ball and RUN through the hole on the {R}!',
               ballCarrier: true,
@@ -51,6 +55,10 @@ var Plays = (function () {
     {
       id: 'sweep', nameTpl: 'Sweep {D}', dir: 'Left', type: 'run', level: 1,
       coach: 'Wide around the outside.',
+      about: 'Run around the outside, not up the middle.',
+      steps: ['Center snaps it.',
+              'A Wide Receiver runs across.',
+              'He takes it and runs wide {L}!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
@@ -59,7 +67,7 @@ var Plays = (function () {
         WR: { say: 'Come across, take the ball, and run wide to the {L}!',
               ballCarrier: true,
               segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[27,64]] }] },
-        QB: { say: 'Catch the snap, fake it to the Runner, then hand it to the Catcher coming across.',
+        QB: { say: 'Catch the snap, fake it to the Running Back, then hand it to the Wide Receiver coming across.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'FAKE like you have the ball, then run straight down the field.',
               segs: [{ style: 'fake',  pts: [[50,85],[58,74]] },
@@ -70,24 +78,28 @@ var Plays = (function () {
 
     {
       /* NOTE: the card says "Reverse Right" but the ball finishes going LEFT --
-         the Runner starts right, the Catcher takes it the other way. Never let
+         the Running Back starts right, the Wide Receiver takes it the other way. Never let
          a kid guess direction from this name; the instructions say it outright. */
       id: 'reverse', nameTpl: 'Reverse {D}', dir: 'Right', type: 'run', level: 2,
       coach: 'Starts one way, goes the other.',
+      about: 'A trick! The ball goes back the other way.',
+      steps: ['Running Back takes it and starts {R}.',
+              'A Wide Receiver takes it from him.',
+              'He runs back the other way, {L}!'],
       heads_up: 'Careful! Reverse {D} ends up going {L}.',
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
         WL: { say: 'Run straight down the field!',
               segs: [{ style: 'solid', pts: [[20,70],[20,30]] }] },
-        WR: { say: 'Come across, take the ball from the Runner, and keep running {L}!',
+        WR: { say: 'Come across, take the ball from the Running Back, and keep running {L}!',
               ballCarrier: true,
               segs: [{ style: 'solid', pts: [[80,70],[64,82],[41,84],[27,64]] }] },
-        QB: { say: 'Catch the snap and hand it to the Runner.',
+        QB: { say: 'Catch the snap and hand it to the Running Back.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
-        RB: { say: 'Take the ball, start running {R}, then hand it off to the Catcher coming across. Keep running!',
-              /* The bend at [62,81] is the mesh point -- it puts the Runner and
-                 the Catcher shoulder to shoulder so the exchange reads as a
+        RB: { say: 'Take the ball, start running {R}, then hand it off to the Wide Receiver coming across. Keep running!',
+              /* The bend at [62,81] is the mesh point -- it puts the Running Back and
+                 the Wide Receiver shoulder to shoulder so the exchange reads as a
                  handoff rather than a pitch. */
               segs: [{ style: 'solid', pts: [[50,85],[62,81],[78,48]] }] }
       },
@@ -100,7 +112,11 @@ var Plays = (function () {
       /* The card has a faint "Pass" watermark -- ignore it. This one is a RUN.
          Plays 'reverse' and 'fakereverse' look identical until the mesh point. */
       id: 'fakereverse', nameTpl: 'Fake Reverse {D}', dir: 'Right', type: 'run', level: 2,
-      coach: 'Looks just like Reverse — but the Runner keeps it.',
+      coach: 'Looks just like Reverse — but the Running Back keeps it.',
+      about: 'Looks like Reverse — but it is a fake!',
+      steps: ['Running Back takes it and starts {R}.',
+              'A Wide Receiver FAKES taking it.',
+              'Running Back keeps it and runs {R}!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {L}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[36,56]] }] },
@@ -109,9 +125,9 @@ var Plays = (function () {
         WR: { say: 'Come across and FAKE like you are taking the ball, then keep running {L}.',
               segs: [{ style: 'fake',  pts: [[80,70],[64,82]] },
                      { style: 'solid', pts: [[64,82],[41,84],[29,63]] }] },
-        QB: { say: 'Catch the snap and hand it to the Runner.',
+        QB: { say: 'Catch the snap and hand it to the Running Back.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
-        RB: { say: 'Take the ball, FAKE the handoff to the Catcher, then KEEP IT and run {R}!',
+        RB: { say: 'Take the ball, FAKE the handoff to the Wide Receiver, then KEEP IT and run {R}!',
               ballCarrier: true,
               segs: [{ style: 'solid', pts: [[50,85],[62,81],[77,45]] }] }
       },
@@ -121,16 +137,20 @@ var Plays = (function () {
     /* ------------------------------------------------------------- PASSES */
     {
       id: 'sweeppass', nameTpl: 'Sweep {D} Pass', dir: 'Left', type: 'pass', level: 3,
-      coach: 'Looks like Sweep — then the Catcher throws it.',
+      coach: 'Looks like Sweep — then the Wide Receiver throws it.',
+      about: 'Looks like Sweep — then he throws it!',
+      steps: ['A Wide Receiver takes it and runs {L}.',
+              'The Center sneaks down the {L} side.',
+              'The Receiver stops and throws to him!'],
       assignments: {
         C:  { say: 'Snap the ball, run up at an angle to the {L}, then turn around. The ball is coming to YOU!',
               ballCarrier: true,
               segs: [{ style: 'solid', pts: [[50,70],[33,48],[33,55]] }] },
         WL: { say: 'Run straight down the field to clear everybody out!',
               segs: [{ style: 'solid', pts: [[20,70],[20,26]] }] },
-        WR: { say: 'Come across, take the ball, run {L} -- then STOP and THROW it to the Snapper!',
+        WR: { say: 'Come across, take the ball, run {L} -- then STOP and THROW it to the Center!',
               segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[31,84]] }] },
-        QB: { say: 'Catch the snap and hand it to the Catcher coming across.',
+        QB: { say: 'Catch the snap and hand it to the Wide Receiver coming across.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'Run up the field on the {R} side.',
               segs: [{ style: 'solid', pts: [[50,85],[60,76],[60,34]] }] }
@@ -144,7 +164,11 @@ var Plays = (function () {
       /* Card says "RB Pass Right". A pass TO the Running Back -- he does not throw
          it. Spelled out here because the drill reads the name out loud. */
       id: 'rbpass', nameTpl: 'Running Back Pass {D}', dir: 'Right', type: 'pass', level: 3,
-      coach: 'Fake it to the Runner, then throw it to him.',
+      coach: 'Fake it to the Running Back, then throw it to him.',
+      about: 'Fake it to him, then throw it to him!',
+      steps: ['Quarterback FAKES the handoff.',
+              'Running Back sneaks out to the {R}.',
+              'Quarterback throws it to him!'],
       assignments: {
         C:  { say: 'Snap the ball, then run straight down the field.',
               segs: [{ style: 'solid', pts: [[50,70],[50,28]] }] },
@@ -153,7 +177,7 @@ var Plays = (function () {
         WR: { say: 'Run across behind everybody to the {L} to trick them.',
               segs: [{ style: 'solid', pts: [[80,70],[63,84]] },
                      { style: 'fake',  pts: [[63,84],[31,84]] }] },
-        QB: { say: 'Catch the snap, FAKE the handoff to the Runner, then throw it {R} to him.',
+        QB: { say: 'Catch the snap, FAKE the handoff to the Running Back, then throw it {R} to him.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'FAKE like you are taking the handoff, then slip out and cut {R}. Catch the ball!',
               ballCarrier: true,
@@ -165,7 +189,11 @@ var Plays = (function () {
 
     {
       id: 'fakedive', nameTpl: 'Fake Dive Receiver Pass {D}', dir: 'Left', type: 'pass', level: 3,
-      coach: 'Fake the Dive, throw to the Catcher.',
+      coach: 'Fake the Dive, throw to the Wide Receiver.',
+      about: 'Fake a run, then throw it.',
+      steps: ['Quarterback FAKES the dive.',
+              'A Wide Receiver cuts to the middle.',
+              'Quarterback throws it {L}!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}.',
               segs: [{ style: 'solid', pts: [[50,70],[50,56],[64,56]] }] },
@@ -174,7 +202,7 @@ var Plays = (function () {
               segs: [{ style: 'solid', pts: [[20,70],[20,48],[37,48]] }] },
         WR: { say: 'Run across behind everybody, then go up the field on the {L}.',
               segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[29,65]] }] },
-        QB: { say: 'Catch the snap, FAKE the dive to the Runner, then throw it {L}.',
+        QB: { say: 'Catch the snap, FAKE the dive to the Running Back, then throw it {L}.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'FAKE like you are taking the ball, then run straight down the field.',
               segs: [{ style: 'fake',  pts: [[50,85],[58,76]] },
@@ -186,7 +214,11 @@ var Plays = (function () {
     {
       /* Card says "Fake Sweep Left C Pass". The "C" is the Center -- he catches it. */
       id: 'fakesweepc', nameTpl: 'Fake Sweep {D} Center Pass', dir: 'Left', type: 'pass', level: 3,
-      coach: 'Fake the Sweep, throw to the Snapper.',
+      coach: 'Fake the Sweep, throw to the Center.',
+      about: 'Fake the Sweep, throw to the Center!',
+      steps: ['Quarterback FAKES the handoff.',
+              'The Center cuts to the {R}.',
+              'Quarterback throws it to the Center!'],
       assignments: {
         C:  { say: 'Snap the ball, run straight up, then cut to the {R}. The ball is coming to YOU!',
               ballCarrier: true,
@@ -195,7 +227,7 @@ var Plays = (function () {
               segs: [{ style: 'solid', pts: [[20,70],[20,48],[37,48]] }] },
         WR: { say: 'Run across behind everybody like you are getting the ball on a sweep.',
               segs: [{ style: 'solid', pts: [[80,70],[63,84],[41,84],[29,64]] }] },
-        QB: { say: 'Catch the snap, FAKE the handoff to the Runner, then throw it {R} to the Snapper.',
+        QB: { say: 'Catch the snap, FAKE the handoff to the Running Back, then throw it {R} to the Center.',
               segs: [{ style: 'solid', pts: [[50,77],[50,80]] }] },
         RB: { say: 'FAKE like you are taking the ball, then run straight down the field.',
               segs: [{ style: 'fake',  pts: [[50,85],[58,76]] },

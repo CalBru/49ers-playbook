@@ -29,10 +29,11 @@ h2,h3{margin:0}
   display:flex;align-items:center;gap:8px;
   padding:10px var(--pad);background:linear-gradient(180deg,var(--scarlet),#8B0000);
 }
-.appbar__home,.appbar__back{
+.appbar__home,.appbar__back,.appbar__mute{
   width:40px;height:40px;border-radius:12px;font-size:20px;line-height:1;
   display:grid;place-items:center;background:rgba(0,0,0,.22);flex:0 0 auto;
 }
+.appbar__mute.is-off{background:rgba(0,0,0,.42);opacity:.55}
 .appbar__title{
   flex:1;min-width:0;font-size:16px;font-weight:800;letter-spacing:.2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -219,6 +220,48 @@ h2,h3{margin:0}
 .poscard--big .row{display:flex;gap:9px;flex-wrap:wrap}
 .ghostbtn{min-height:48px;padding:0 15px;border-radius:14px;background:var(--card-2);
   border:2px solid var(--line);font-weight:700;font-size:15px}
+
+/* ------------------------------------------------- new-assignment cue */
+.cue{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end}
+.cue[hidden]{display:none!important}
+.cue__scrim{position:absolute;inset:0;background:rgba(8,11,16,.72)}
+.cue__panel{position:relative;width:100%;max-width:640px;margin:0 auto;
+  background:var(--card);border-radius:24px 24px 0 0;border-top:5px solid var(--cc,var(--gold));
+  padding:20px var(--pad) calc(18px + var(--safe-b));
+  max-height:92vh;overflow-y:auto;
+  animation:cueUp .28s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes cueUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.cue__who{margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--cc,var(--gold-lt))}
+.cue__text{margin:0 0 14px;font-size:19px;font-weight:700;line-height:1.35;color:var(--ink)}
+
+/* The play, in order, before anyone's individual job. */
+.cue__steps{margin:0 0 16px;padding:0 0 0 2px;list-style:none;counter-reset:st}
+.cue__steps li{position:relative;counter-increment:st;padding:0 0 12px 40px;font-size:16.5px;
+  line-height:1.35;color:var(--ink)}
+.cue__steps li::before{content:counter(st);position:absolute;left:0;top:-1px;
+  width:27px;height:27px;border-radius:50%;background:var(--card-2);
+  border:2px solid var(--cc,var(--gold));color:var(--cc,var(--gold-lt));
+  font-size:14px;font-weight:900;display:grid;place-items:center}
+.cue__steps li:last-child{padding-bottom:4px}
+
+.cue__job{display:block;margin:0 0 16px;padding:13px 14px;border-radius:16px;
+  background:var(--card-2);border-left:6px solid var(--cc,var(--gold))}
+.cue__joblbl{display:block;font-size:12px;font-weight:800;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--cc,var(--gold-lt));margin-bottom:5px}
+.cue__jobtxt{display:block;font-size:19px;font-weight:750;line-height:1.35}
+.cue__jobtxt b{color:var(--gold-lt)}
+.cue__jobtxt .fakeword{color:#F5A524;font-weight:900}
+.cue__warn{display:block;margin-top:9px;padding-top:9px;font-size:16px;font-weight:800;
+  color:var(--gold-lt);border-top:1px solid var(--line)}
+.cue__text b{color:var(--gold-lt)}
+.cue__text .fakeword{color:#F5A524;font-weight:900}
+.cue__row{display:flex;gap:10px}
+.cue__speak{width:var(--tap);height:var(--tap);flex:0 0 auto;border-radius:16px;font-size:22px;
+  background:var(--card-2);border:2px solid var(--line);display:grid;place-items:center}
+.cue__go{flex:1;min-height:var(--tap);border-radius:16px;font-size:17px;font-weight:800;
+  background:var(--scarlet);border:2px solid var(--scarlet-lt)}
+.cue__go:active,.cue__speak:active{transform:scale(.97)}
 
 /* ---------------------------------------------------------------- confetti */
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}

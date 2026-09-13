@@ -5,19 +5,25 @@ var App = (function () {
   var KEY = 'niners-playbook-v1';
   var $ = function (id) { return document.getElementById(id); };
 
-  var state = { pos: null, stars: {}, screen: 'home' };
+  var state = { pos: null, stars: {}, muted: false, screen: 'home' };
   var view  = { play: null, flipped: false, anim: null };
 
   /* ------------------------------------------------------------- storage */
   function load() {
     try {
       var raw = localStorage.getItem(KEY);
-      if (raw) { var s = JSON.parse(raw); state.pos = s.pos || null; state.stars = s.stars || {}; }
+      if (raw) {
+        var s = JSON.parse(raw);
+        state.pos = s.pos || null; state.stars = s.stars || {}; state.muted = !!s.muted;
+      }
     } catch (e) { /* private mode, first run, cleared data — all fine */ }
   }
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify({ pos: state.pos, stars: state.stars })); }
-    catch (e) {}
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        pos: state.pos, stars: state.stars, muted: state.muted
+      }));
+    } catch (e) {}
   }
   function starCount() { return Object.keys(state.stars).length; }
   function award(playId) {
@@ -32,6 +38,7 @@ var App = (function () {
 
   function go(name, arg) {
     if (view.anim) { view.anim.stop(); view.anim = null; }
+    if (!$('cue').hidden) $('cue').hidden = true;
     Speech.stop();
     state.screen = name;
 
@@ -57,6 +64,28 @@ var App = (function () {
   function back() {
     if (state.screen === 'play') go('plays');
     else go('home');
+  }
+
+  /* ----------------------------------------------------------------- sound */
+  /* Everything here talks, which is the point for a pre-reader but not always
+     wanted -- in the car, at practice, or with a sleeping sibling nearby. */
+  function syncMute() {
+    var b = $('muteBtn');
+    b.hidden = !Speech.ok;
+    b.textContent = state.muted ? '🔇' : '🔊';
+    b.setAttribute('aria-label', state.muted ? 'Turn sound on' : 'Turn sound off');
+    b.classList.toggle('is-off', state.muted);
+    Speech.setMuted(state.muted);
+  }
+
+  function toggleMute() {
+    state.muted = !state.muted;
+    save(); syncMute();
+    /* Repaint so the little speaker buttons appear or disappear with it. */
+    if (state.screen === 'play')      paintPlay();
+    if (state.screen === 'positions') renderPositions();
+    if (!$('cue').hidden) $('cueSpeak').hidden = !Speech.enabled();
+    if (!state.muted) Speech.say('Sound is on!');
   }
 
   /* -------------------------------------------------------- position bar */
@@ -91,11 +120,12 @@ var App = (function () {
   }
 
   function setPos(key) {
+    var changed = state.pos !== key;
     state.pos = key; save(); syncPosBar();
     /* Re-explain whatever is on screen from the new set of eyes. */
     if (state.screen === 'home')      renderHome();
     if (state.screen === 'plays')     renderPlayList();
-    if (state.screen === 'play')      paintPlay();
+    if (state.screen === 'play')    { paintPlay(); if (changed) showPosCue(); }
     if (state.screen === 'positions') renderPositions();
     if (state.screen === 'drills')    Drills.onPosChange();
     if (state.screen === 'quiz')      Quiz.onPosChange();
@@ -145,6 +175,7 @@ var App = (function () {
     view.play = Plays.byId(id) || Plays.list[0];
     view.flipped = false;
     paintPlay();
+    showPlayBrief();
   }
 
   function emphasise(txt) {
@@ -179,7 +210,7 @@ var App = (function () {
     txt.innerHTML = emphasise(a.say) +
       (p.heads_up ? '<br><b style="color:var(--gold-lt)">⚠️ ' +
         Plays.text(p.heads_up, p) + '</b>' : '');
-    $('jobSpeak').hidden = !Speech.ok;
+    $('jobSpeak').hidden = !Speech.enabled();
     $('jobSpeak').onclick = function () { Speech.say(a.say); };
   }
 
@@ -190,6 +221,78 @@ var App = (function () {
     if (state.pos) award(p.id);
   }
 
+  /* ------------------------------------------------------------- the cue */
+  /* One overlay, read top to bottom: what the play is for, the play in simple
+     steps, then YOUR job. It comes up when you open a play and again whenever
+     you swap position mid-play, because your job just silently changed.
+     Auto-spoken, since most six-year-olds cannot read it. */
+  function openCue(opts) {
+    var colour = opts.colour || '#B3995D';
+    $('cue').style.setProperty('--cc', colour);
+    $('cueWho').textContent  = opts.kicker;
+    $('cueText').innerHTML   = emphasise(opts.text || '');
+    $('cueText').hidden      = !opts.text;
+
+    var steps = opts.steps || [];
+    $('cueSteps').innerHTML = steps.map(function (t) {
+      return '<li>' + emphasise(t) + '</li>';
+    }).join('');
+    $('cueSteps').hidden = !steps.length;
+
+    $('cueJob').hidden = !opts.job;
+    if (opts.job) {
+      $('cueJobLbl').textContent = opts.jobLabel;
+      $('cueJobTxt').innerHTML   = emphasise(opts.job) +
+        (opts.warn ? '<span class="cue__warn">⚠️ ' + emphasise(opts.warn) + '</span>' : '');
+    }
+
+    $('cueGo').textContent = opts.goLabel || 'Got it — show me ▶';
+    $('cueSpeak').hidden = !Speech.enabled();
+    $('cue').hidden = false;
+    $('cue').querySelector('.cue__panel').scrollTop = 0;
+
+    var script = opts.say;
+    Speech.say(script);
+    $('cueSpeak').onclick = function () { Speech.say(script); };
+  }
+
+  /* Opening a play: what the play IS, and nothing else. Your own job is on the
+     play screen right behind this, and in the cue when you swap position --
+     stacking it here just made a wall of text. */
+  function showPlayBrief() {
+    var p = current();
+    var about = Plays.text(p.about || '', p);
+    var steps = (p.steps || []).map(function (t) { return Plays.text(t, p); });
+
+    openCue({
+      kicker: Plays.name(p), text: about, steps: steps,
+      say: [Plays.spoken(p) + '.', about].concat(steps).join(' '),
+      goLabel: 'Watch it ▶'
+    });
+  }
+
+  /* Swapping position mid-play: just the new job, kept short. */
+  function showPosCue() {
+    var p = current(), a = Plays.assignment(p, state.pos);
+    if (!a) return;
+    var warn = p.heads_up ? Plays.text(p.heads_up, p) : null;
+    openCue({
+      kicker: Plays.name(p),
+      job: a.say, warn: warn,
+      jobLabel: 'Your job — ' + Positions.shortName(state.pos),
+      colour: Positions.color(state.pos),
+      say: 'You are the ' + Positions.shortName(state.pos) + '. ' + a.say +
+           (warn ? ' ' + warn : ''),
+      goLabel: 'Got it — show me ▶'
+    });
+  }
+
+  function hideCue(thenPlay) {
+    $('cue').hidden = true;
+    Speech.stop();
+    if (thenPlay) hike();
+  }
+
   /* ------------------------------------------------------------ positions */
   function renderPositions() {
     $('posList').innerHTML = Positions.list.map(function (p) {
@@ -198,7 +301,7 @@ var App = (function () {
         '<div class="nick">' + p.nick + ' · Number ' + p.num + '</div>' +
         '<p>' + p.job + '</p>' +
         '<div class="row">' +
-          (Speech.ok ? '<button class="ghostbtn" data-say="' + p.key + '">🔊 Read it</button>' : '') +
+          (Speech.enabled() ? '<button class="ghostbtn" data-say="' + p.key + '">🔊 Read it</button>' : '') +
           '<button class="ghostbtn" data-be="' + p.key + '">I am this one</button>' +
         '</div></div>';
     }).join('');
@@ -221,9 +324,10 @@ var App = (function () {
 
   /* ----------------------------------------------------------------- wire */
   function init() {
-    load(); renderPosBar();
+    load(); syncMute(); renderPosBar();
 
     $('homeBtn').addEventListener('click', function () { go('home'); });
+    $('muteBtn').addEventListener('click', toggleMute);
     $('backBtn').addEventListener('click', back);
     $('randomPos').addEventListener('click', function () {
       var pool = Positions.keys.filter(function (k) { return k !== state.pos; });
@@ -242,6 +346,9 @@ var App = (function () {
     });
 
     $('hikeBtn').addEventListener('click', hike);
+    $('cueGo').addEventListener('click', function () { hideCue(true); });
+    document.querySelector('[data-cue-close]')
+            .addEventListener('click', function () { hideCue(false); });
     $('flipBtn').addEventListener('click', function () {
       view.flipped = !view.flipped;
       paintPlay();

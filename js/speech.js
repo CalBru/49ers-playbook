@@ -7,6 +7,7 @@ var Speech = (function () {
   var synth = window.speechSynthesis || null;
   var ok = !!(synth && typeof SpeechSynthesisUtterance !== 'undefined');
   var voice = null;
+  var muted = false;   // owned by the app, persisted there
 
   function pickVoice() {
     if (!ok) return;
@@ -29,7 +30,7 @@ var Speech = (function () {
   }
 
   function say(text, opts) {
-    if (!ok || !text) return;
+    if (!ok || muted || !text) return;
     opts = opts || {};
     try {
       synth.cancel();
@@ -49,5 +50,17 @@ var Speech = (function () {
 
   function stop() { if (ok) { try { synth.cancel(); } catch (e) {} } }
 
-  return { ok: ok, say: say, callPlay: callPlay, stop: stop };
+  /* Available at all only if the browser can speak AND the user wants it. */
+  function enabled() { return ok && !muted; }
+
+  function setMuted(v) {
+    muted = !!v;
+    if (muted) stop();
+  }
+
+  return {
+    ok: ok, say: say, callPlay: callPlay, stop: stop,
+    enabled: enabled, setMuted: setMuted,
+    get muted() { return muted; }
+  };
 })();
