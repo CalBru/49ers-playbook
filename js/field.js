@@ -64,7 +64,12 @@ var Field = (function () {
       var a = Plays.assignment(play, pos.key);
       if (!a) return;
 
-      var dim   = focus && focus !== pos.key;
+      /* The ball's route stays half-lit even in "just me" mode. For the QB —
+         whose own route is a two-step stub — where the ball goes IS his job,
+         and for everyone else it is useful context. */
+      var isCarrier = (pos.key === carrier);
+      var dim   = focus && focus !== pos.key && !isCarrier;
+      var half  = focus && focus !== pos.key && isCarrier;
       var color = a.ballCarrier ? BALL : pos.color;
       var id    = 'm' + (++uid);
 
@@ -92,7 +97,8 @@ var Field = (function () {
 
       var g = el('g', {
         mask: opts.animate ? 'url(#' + id + ')' : null,
-        class: 'f-route' + (dim ? ' is-dim' : '') + (focus === pos.key ? ' is-focus' : '')
+        class: 'f-route' + (dim ? ' is-dim' : '') + (half ? ' is-half' : '') +
+               (focus === pos.key ? ' is-focus' : '')
       });
 
       a.segs.forEach(function (s) {
