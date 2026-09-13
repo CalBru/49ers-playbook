@@ -110,8 +110,15 @@ h2,h3{margin:0}
 
 /* -------------------------------------------------------------- play view */
 .screen--play{padding-bottom:calc(96px + var(--safe-b))}
-.playhead{display:flex;align-items:center;gap:10px;justify-content:center;margin:2px 0 10px}
-.playname{font-size:27px;font-weight:900;letter-spacing:-.3px;text-align:center;line-height:1.1}
+.playhead{display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:2px auto 10px;max-width:520px}
+/* Step through the playbook without going back to the list. */
+.playnav{width:44px;height:44px;flex:0 0 auto;border-radius:50%;font-size:15px;
+  background:var(--card-2);border:2px solid var(--line);display:grid;place-items:center;
+  color:var(--ink-dim)}
+.playnav:active{transform:scale(.9);color:var(--ink)}
+.playname{flex:1;min-width:0;font-size:24px;font-weight:900;letter-spacing:-.3px;
+  text-align:center;line-height:1.12}
 .speak{
   width:46px;height:46px;flex:0 0 auto;border-radius:50%;font-size:21px;
   background:var(--card-2);border:2px solid var(--line);display:grid;place-items:center;
@@ -283,7 +290,7 @@ h2,h3{margin:0}
   .menu{grid-template-columns:1fr 1fr}
   .playlist{grid-template-columns:1fr 1fr}
   .pl-group{grid-column:1/-1}
-  .playname{font-size:34px}
+  .playname{font-size:32px}
   .screen--play{padding-bottom:calc(96px + var(--safe-b))}
   .actionbar{max-width:900px;margin:0 auto;border-radius:20px 20px 0 0}
   .choices--2{grid-template-columns:1fr 1fr}

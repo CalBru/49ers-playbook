@@ -180,6 +180,14 @@ var App = (function () {
     return view.flipped ? Plays.flip(view.play) : view.play;
   }
 
+  /* Walk the playbook in order -- runs, then passes -- wrapping at the ends. */
+  function stepPlay(delta) {
+    var list = Plays.list;
+    var i = list.indexOf(view.play);
+    if (i < 0) i = 0;
+    go('play', list[(i + delta + list.length) % list.length].id);
+  }
+
   function openPlay(id) {
     view.play = Plays.byId(id) || Plays.list[0];
     view.flipped = false;
@@ -360,6 +368,8 @@ var App = (function () {
       paintPlay();
       showPlayBrief();
     });
+    $('prevPlay').addEventListener('click', function () { stepPlay(-1); });
+    $('nextPlay').addEventListener('click', function () { stepPlay(1); });
     $('playNameSpeak').addEventListener('click', function () {
       Speech.callPlay(Plays.spoken(current()));
     });

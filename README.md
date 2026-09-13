@@ -10,7 +10,8 @@ Works on a phone, an iPad, or a computer. No app to install.
 ## What's in it
 
 - **Learn the Plays** — opening a play explains what it is first, in three short
-  steps, then you watch it. Tap `HIKE!` to run it again.
+  steps, then you watch it. Tap `HIKE!` to run it again, and the arrows either
+  side of the play name step through the whole playbook without going back.
   `Other way` mirrors the play left/right. Once you've picked a spot, your own
   route is the bright one and everyone else fades back.
 - **Coach Calls It** — two drills. *Hear it, do it*: Coach calls a play, you say
