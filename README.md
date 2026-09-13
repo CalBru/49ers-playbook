@@ -10,12 +10,20 @@ Works on a phone, an iPad, or a computer. No app to install.
 ## What's in it
 
 - **Learn the Plays** — all 8 plays animated. Tap `HIKE!` and watch it happen.
-  `Flip` mirrors the play left/right. "Just show me" hides everyone else's route.
-- **Coach Calls It** — drills the play *names*, three ways: hear it and pick it,
-  watch it and name it, hear it and show which way you go.
-- **Play the Game** — who gets the ball, where do you finish, and are you faking
-  or do you really get it. Earns stars.
+  `Other way` mirrors the play left/right. Once you've picked a spot, your own
+  route is the bright one and everyone else fades back.
+- **Coach Calls It** — two drills. *Hear it, do it*: Coach calls a play, you say
+  what your job is. *Watch it, name it*: it plays silently, you name it.
+- **Play the Game** — who gets the ball, which of three spots you finish in, and
+  are you faking or do you really get it. Earns stars.
 - **The Positions** — what each of the five spots does.
+
+Picking a position is optional and can be changed from any screen — the button
+in the top-right pulses until you choose one. Nothing asks you to commit before
+you've seen anything.
+
+The animation runs deliberately slowly. Six-year-olds can't follow five routes at
+game speed, and a learning tool has no reason to run at one.
 
 Every instruction and play name has a 🔊 button, because most six-year-olds
 can't read them yet.
@@ -74,6 +82,11 @@ route as a list of points.
   when the play is mirrored. `{D}` in a play name is that play's own direction.
 - Set `ballCarrier: true` on whoever ends up with the ball. That's the red route.
 - Flipping a play is just `x → 100 - x`, so you never draw a play twice.
+
+What each position *does* on a play — run it, catch it, throw it, hand it off,
+fake it, or just run a route — is worked out from the routes and the ball events
+rather than written by hand, so it can't drift out of sync with the diagram. That
+derived job is what the *Hear it, do it* drill asks for.
 
 ## Running it
 

@@ -1,10 +1,11 @@
 /* drills.js — "Coach Calls It". Teaches the PLAY NAMES, which is the thing a
    photo of a whiteboard teaches worst.
 
-   Three directions, because a name has to work both ways round:
-     hear  -> pick   (what actually happens at practice)
-     see   -> name   (watch it, then name it)
-     name  -> do     (hear the call, show what YOU do) */
+   Two drills, deliberately. An earlier "hear it, pick it from a list" round
+   was cut: it tested reading the options, not knowing the play.
+
+     see  -> name   (watch it, then name it)
+     hear -> do     (Coach calls it -- what is YOUR job?) */
 
 var Drills = (function () {
 
@@ -21,18 +22,6 @@ var Drills = (function () {
     return a;
   }
   function pool() { return Plays.all(true); }   // all 8 shapes, both directions
-
-  /* Which way does this position actually end up going on this play? */
-  function wayOf(play, posKey) {
-    var a = Plays.assignment(play, posKey);
-    if (!a) return 'STRAIGHT';
-    var pts = [];
-    a.segs.forEach(function (s) { pts = pts.concat(s.pts); });
-    var dx = pts[pts.length - 1][0] - pts[0][0];
-    if (dx < -6) return 'LEFT';
-    if (dx >  6) return 'RIGHT';
-    return 'STRAIGHT';
-  }
 
   function distractors(target, n) {
     var name = Plays.name(target);
@@ -67,15 +56,12 @@ var Drills = (function () {
         '<h2 class="drill__q">Know the play names</h2>' +
         '<p class="drill__hint">Pick how you want to practise. Five calls per round.</p>' +
         '<div class="modepick">' +
-          '<button class="menu__btn menu__btn--drills" data-mode="hear">' +
-            '<span class="menu__icon">🔊</span><span class="menu__text">' +
-            '<b>Hear it, find it</b><i>Coach calls a play — you pick it</i></span></button>' +
+          '<button class="menu__btn menu__btn--quiz" data-mode="do">' +
+            '<span class="menu__icon">🏃</span><span class="menu__text">' +
+            '<b>Hear it, do it</b><i>Coach calls a play — what is YOUR job?</i></span></button>' +
           '<button class="menu__btn menu__btn--plays" data-mode="see">' +
             '<span class="menu__icon">👀</span><span class="menu__text">' +
             '<b>Watch it, name it</b><i>See the play — you name it</i></span></button>' +
-          '<button class="menu__btn menu__btn--quiz" data-mode="do">' +
-            '<span class="menu__icon">🏃</span><span class="menu__text">' +
-            '<b>Hear it, do it</b><i>Coach calls it — which way do YOU go?</i></span></button>' +
         '</div>' +
       '</div>';
 
@@ -107,12 +93,8 @@ var Drills = (function () {
     if (idx >= queue.length) return renderScore();
     locked = false;
     var q = queue[idx], p = q.play, name = Plays.name(p);
-
-    /* What is written vs what Coach yells -- usually the same, but the drill
-       must call it the way he says it. */
-    if (mode === 'hear')      renderHear(q, p, name);
-    else if (mode === 'see')  renderSee(q, p, name);
-    else                      renderDo(q, p, name);
+    if (mode === 'see') renderSee(q, p, name);
+    else                renderDo(q, p, name);
   }
 
   function choiceBtns(q, correctName, onPick) {
@@ -145,9 +127,8 @@ var Drills = (function () {
 
     var fb = host.querySelector('.feedback');
     fb.className = 'feedback ' + (right ? 'is-ok' : 'is-no');
-    fb.textContent = right ? '✅ Nice! That is it.' : '👉 This one is ' + Plays.name(play) + '.';
-    if (note) fb.textContent += ' ' + note;
-    Speech.say(right ? 'Nice!' : 'That one is ' + Plays.spoken(play));
+    fb.textContent = (right ? '✅ Nice! ' : '👉 ') + (note || 'This one is ' + Plays.name(play) + '.');
+    Speech.say((right ? 'Nice! ' : '') + (note || 'That one is ' + Plays.spoken(play)));
 
     /* Wrong ones come back later in the round — no penalty, just another look. */
     if (!right) queue.push(queue[idx]);
@@ -161,23 +142,7 @@ var Drills = (function () {
     host.querySelector('.drill').appendChild(next);
   }
 
-  /* --- mode 1: hear it, find it ---------------------------------------- */
-  function renderHear(q, p, name) {
-    host.innerHTML =
-      '<div class="drill">' + pips() +
-        '<p class="drill__kicker">Coach calls the play</p>' +
-        '<button class="bigsound" id="replay"><span>🔊</span>Say it again</button>' +
-        '<p class="drill__hint">Which play did Coach call?</p>' +
-        '<div id="ch"></div><p class="feedback"></p>' +
-      '</div>';
-    host.querySelector('#ch').appendChild(choiceBtns(q, name, function (r) {
-      afterAnswer(r, p);
-    }));
-    host.querySelector('#replay').addEventListener('click', function () { Speech.callPlay(Plays.spoken(p)); });
-    Speech.callPlay(Plays.spoken(p));
-  }
-
-  /* --- mode 2: watch it, name it --------------------------------------- */
+  /* --- watch it, name it --------------------------------------- */
   function renderSee(q, p, name) {
     host.innerHTML =
       '<div class="drill">' + pips() +
@@ -197,50 +162,54 @@ var Drills = (function () {
     run();
   }
 
-  /* --- mode 3: hear it, do it ------------------------------------------ */
+  /* --- hear it, do it: what is your JOB? ------------------------------- */
+  /* Asks for the ACTION, not the direction. "Which way do you go?" was a
+     coin-flip a kid could pass without knowing the play; what you actually DO
+     on it -- run it, catch it, fake it -- is the thing worth knowing. */
   function renderDo(q, p, name) {
     if (!App.pos) { mode = null; return renderModes(); }
     var me = Positions.shortName(App.pos);
-    var answer = wayOf(p, App.pos);
-    var opts = [
-      { k: 'LEFT',     icon: '←', label: 'Go LEFT' },
-      { k: 'STRAIGHT', icon: '↑', label: 'Go STRAIGHT' },
-      { k: 'RIGHT',    icon: '→', label: 'Go RIGHT' }
-    ];
+    var answer = Plays.action(p, App.pos);
+
+    /* Correct answer plus two plausible others. */
+    var ids = Object.keys(Plays.ACTIONS).filter(function (k) { return k !== answer.id; });
+    var opts = shuffle([answer.id].concat(shuffle(ids).slice(0, 2)));
 
     host.innerHTML =
       '<div class="drill">' + pips() +
         '<p class="drill__kicker">You are the ' + me + '</p>' +
         '<h2 class="drill__q">' + name + '</h2>' +
         '<button class="bigsound" id="replay"><span>🔊</span>Say it again</button>' +
-        '<p class="drill__hint">Which way do YOU go?</p>' +
-        '<div class="choices choices--arrows" id="ch"></div>' +
+        '<p class="drill__hint">What is your job on this play?</p>' +
+        '<div class="choices" id="ch"></div>' +
         '<p class="feedback"></p>' +
       '</div>';
 
     var ch = host.querySelector('#ch');
-    opts.forEach(function (o) {
+    opts.forEach(function (id) {
       var b = document.createElement('button');
       b.className = 'choice';
-      b.innerHTML = '<span>' + o.icon + '</span>' + o.label;
+      b.textContent = Plays.ACTIONS[id].label;
       b.addEventListener('click', function () {
         if (locked) return;
         locked = true;
-        var right = o.k === answer;
+        var right = id === answer.id;
         b.classList.add(right ? 'is-right' : 'is-wrong');
         if (!right) {
-          ch.querySelectorAll('.choice').forEach(function (x, i) {
-            if (opts[i].k === answer) x.classList.add('is-right');
+          ch.querySelectorAll('.choice').forEach(function (x) {
+            if (x.textContent === answer.label) x.classList.add('is-right');
           });
         }
-        /* Show it, don't just say it. */
+
+        /* Always show it, so a wrong answer still teaches the play. */
         var box = document.createElement('div');
         box.className = 'drill__field';
         box.innerHTML = '<svg viewBox="0 20 100 78" preserveAspectRatio="xMidYMid meet"></svg>';
         ch.parentNode.insertBefore(box, ch.nextSibling);
         Field.render(box.querySelector('svg'), p, { focus: App.pos, animate: true });
 
-        afterAnswer(right, p, p.heads_up ? Plays.text(p.heads_up, p) : '');
+        var a = Plays.assignment(p, App.pos);
+        afterAnswer(right, p, a.say);
       });
       ch.appendChild(b);
     });
@@ -267,5 +236,5 @@ var Drills = (function () {
     if (perfect) App.confetti();
   }
 
-  return { start: start, onPosChange: onPosChange, wayOf: wayOf, shuffle: shuffle };
+  return { start: start, onPosChange: onPosChange, shuffle: shuffle };
 })();

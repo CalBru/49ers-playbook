@@ -209,7 +209,9 @@ var Field = (function () {
   }
 
   function animate(api, play, opts) {
-    var dur = 2600 / (opts.speed || 1);
+    /* Deliberately slow. Six-year-olds cannot follow five routes at game
+       speed, and there is no reason a learning tool should run at one. */
+    var dur = 5400 / (opts.speed || 1);
     var t0 = performance.now();
 
     function frame(now) {

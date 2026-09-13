@@ -274,6 +274,42 @@ var Plays = (function () {
     });
   }
 
+  /* ---------------------------------------------------------------- jobs */
+  /* What this position actually DOES on this play, in one word. Derived from
+     the diagram and the ball events rather than hand-written per play, so it
+     can never drift out of sync with the routes.
+
+       run   - carries the ball on a running play
+       catch - the pass is coming to you
+       throw - you throw it
+       hand  - you give the ball to someone else
+       fake  - you have a dotted line: pretend you have it
+       route - run your route, no ball this time                            */
+
+  var ACTIONS = {
+    run:   { label: 'Get the ball and RUN!',            short: 'Run it' },
+    catch: { label: 'Go out for a pass and CATCH it!',  short: 'Catch it' },
+    throw: { label: 'THROW the ball!',                  short: 'Throw it' },
+    hand:  { label: 'HAND the ball off to someone.',    short: 'Hand it off' },
+    fake:  { label: 'FAKE it — pretend you have it!',   short: 'Fake it' },
+    route: { label: 'Run your route — no ball for you.', short: 'Just run' }
+  };
+
+  function action(play, posKey) {
+    var a = assignment(play, posKey);
+    if (!a) return null;
+    var id;
+    if (a.ballCarrier) {
+      id = play.type === 'run' ? 'run' : 'catch';
+    } else {
+      var evs = ballEvents(play);
+      var throws = evs.some(function (e) { return e.kind === 'throw'    && e.from === posKey; });
+      var hands  = evs.some(function (e) { return e.kind === 'handoff'  && e.from === posKey; });
+      id = throws ? 'throw' : hands ? 'hand' : a.hasFake ? 'fake' : 'route';
+    }
+    return { id: id, label: ACTIONS[id].label, short: ACTIONS[id].short };
+  }
+
   /* Who ends up with the ball, as a position key. */
   function carrier(play) {
     var found = null;
@@ -302,6 +338,7 @@ var Plays = (function () {
     list: LIST, all: all, byId: byId,
     flip: flip, name: name, spoken: spoken, dir: dir, text: text,
     assignment: assignment, ballEvents: ballEvents, carrier: carrier,
+    action: action, ACTIONS: ACTIONS,
     LOS: LOS
   };
 })();

@@ -45,11 +45,18 @@ h2,h3{margin:0}
 .poschip__dot{width:12px;height:12px;border-radius:50%;background:#888;flex:0 0 auto}
 .poschip__label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .poschip__caret{opacity:.75;font-size:11px}
+/* Nothing forces a position at startup, so the chip has to ask for itself. */
+.poschip.is-empty{border-color:#fff;background:rgba(0,0,0,.42);animation:chipPulse 1.9s ease-in-out infinite}
+@keyframes chipPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}
+  55%{box-shadow:0 0 0 7px rgba(255,255,255,0)}
+}
 
 /* ----------------------------------------------------------------- screens */
 .screen{padding:var(--pad);padding-bottom:calc(28px + var(--safe-b));max-width:900px;margin:0 auto}
 .screen[hidden]{display:none}
 .big-q{font-size:23px;font-weight:800;margin:6px 0 14px;text-align:center}
+.big-q--sub{font-size:17px;color:var(--ink-dim);margin-top:26px}
 
 /* ------------------------------------------------------------- position cards */
 .poscards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
@@ -142,7 +149,7 @@ h2,h3{margin:0}
 .act{min-height:var(--tap);border-radius:16px;font-weight:800;font-size:15px;
   background:var(--card-2);border:2px solid var(--line);padding:0 12px;flex:0 0 auto}
 .act--hike{flex:1;background:var(--scarlet);border-color:var(--scarlet-lt);
-  font-size:21px;letter-spacing:1.2px}
+  font-size:22px;letter-spacing:1.4px}
 .act--hike:active{transform:scale(.97)}
 .act.is-on{border-color:var(--gold);color:var(--gold-lt)}
 
@@ -208,6 +215,14 @@ h2,h3{margin:0}
 .scorecard__stars{font-size:42px;letter-spacing:4px}
 .scorecard__msg{font-size:22px;font-weight:800;margin:12px 0 6px}
 .modepick{display:grid;gap:11px;margin-top:8px}
+
+/* -------------------------------------------------- quiz target spots */
+.f-target{cursor:pointer}
+.f-target circle{fill:rgba(179,153,93,.30);stroke:var(--gold-lt);stroke-width:1.1;
+  stroke-dasharray:2.4 1.6}
+.f-target text{fill:var(--gold-lt);font-size:5px;font-weight:900;text-anchor:middle}
+.f-target.is-right circle{fill:rgba(34,197,94,.5);stroke:var(--ok);stroke-dasharray:none}
+.f-target.is-wrong circle{fill:rgba(216,30,30,.45);stroke:var(--scarlet-lt);stroke-dasharray:none}
 
 /* --------------------------------------------------------------- positions */
 .poslist{display:grid;gap:12px}

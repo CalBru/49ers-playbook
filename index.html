@@ -25,8 +25,6 @@
 
   <!-- HOME -->
   <section class="screen" id="screen-home">
-    <h2 class="big-q">Who are you today?</h2>
-    <div class="poscards" id="homePosCards"></div>
     <div class="menu">
       <button class="menu__btn menu__btn--plays" data-go="plays">
         <span class="menu__icon">&#128203;</span>
@@ -46,6 +44,8 @@
       </button>
     </div>
     <p class="stars-line" id="homeStars"></p>
+    <h2 class="big-q big-q--sub">Playing a different spot?</h2>
+    <div class="poscards" id="homePosCards"></div>
   </section>
 
   <!-- PLAY LIST -->
@@ -68,17 +68,11 @@
           <p class="job__text" id="jobText"></p>
           <button class="speak speak--big" id="jobSpeak" aria-label="Read it out loud">&#128264;</button>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="justMe" checked>
-          <span class="toggle__track"><span class="toggle__thumb"></span></span>
-          <span class="toggle__label">Just show me</span>
-        </label>
       </div>
     </div>
     <div class="actionbar">
-      <button class="act act--flip" id="flipBtn">&#8646; Flip</button>
+      <button class="act act--flip" id="flipBtn">&#8646; Other way</button>
       <button class="act act--hike" id="hikeBtn">HIKE!</button>
-      <button class="act act--slow" id="slowBtn">&#128034; Slow</button>
     </div>
   </section>
 

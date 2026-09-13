@@ -22,6 +22,15 @@ var Quiz = (function () {
     return Plays.all(true).filter(function (p) { return p.level <= max; });
   }
 
+  function dist(a, b) {
+    var dx = a[0] - b[0], dy = a[1] - b[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function travel(play, posKey) {
+    return dist(Positions.get(posKey).spot, endPoint(play, posKey));
+  }
+
   function endPoint(play, posKey) {
     var a = Plays.assignment(play, posKey), pts = [];
     a.segs.forEach(function (s) { pts = pts.concat(s.pts); });
@@ -58,14 +67,16 @@ var Quiz = (function () {
   }
   function onPosChange() { start(host); }
 
+  /* Nothing forces a position up front, so when the game needs one it offers
+     the choice right here rather than sending the kid off to find a button. */
   function renderNeedPos() {
     host.innerHTML =
       '<div class="drill">' +
-        '<p class="drill__kicker">Play the Game</p>' +
-        '<h2 class="drill__q">First — which spot are you?</h2>' +
-        '<p class="drill__hint">Tap the button at the top of the screen to pick your spot. ' +
-          'The questions are all about what YOU do.</p>' +
+        '<h2 class="drill__q">Which spot are you playing?</h2>' +
+        '<p class="drill__hint">The questions are all about what YOU do.</p>' +
+        '<div class="poscards" id="quizPos"></div>' +
       '</div>';
+    App.posCards(host.querySelector('#quizPos'));
   }
 
   /* ------------------------------------------------------------ feedback */
@@ -170,15 +181,48 @@ var Quiz = (function () {
     });
   }
 
-  /* --- tap where you run to -------------------------------------------- */
+  /* --- which spot do you finish in? ------------------------------------ */
+  /* This used to ask for an exact tap on the field, which was too fine-grained
+     for a beginner -- knowing roughly where you end up and hitting a pixel are
+     different skills. Now it offers three marked spots. */
   function qWhere(q) {
-    var p = q.play, me = App.pos, target = endPoint(p, me);
+    var p = q.play, me = App.pos;
+    /* Pointless for the Quarterback, who finishes where he started. */
+    if (travel(p, me) < 14) { q.type = 'carrier'; return qCarrier(q); }
+    var target = endPoint(p, me);
+
+    /* Decoys come from where the other players finish -- but only ones who
+       actually go somewhere. The Quarterback barely moves, so his end point
+       sits on top of the formation: visually cluttered and obviously wrong. */
+    var starts = Positions.keys.map(function (k) { return Positions.get(k).spot; });
+    var clearOfFormation = function (e) {
+      return starts.every(function (sp) { return dist(e, sp) > 12; });
+    };
+    var others = Positions.keys
+      .filter(function (k) { return k !== me && travel(p, k) > 14; })
+      .map(function (k) { return endPoint(p, k); })
+      .filter(function (e) { return dist(e, target) > 18 && clearOfFormation(e); });
+    others = shuffle(others);
+
+    var spots = [target];
+    for (var i = 0; i < others.length && spots.length < 3; i++) {
+      var ok = spots.every(function (sp) { return dist(sp, others[i]) > 18; });
+      if (ok) spots.push(others[i]);
+    }
+    /* Fall back to mirrored/offset points if the play bunches everyone up. */
+    var tries = [[100 - target[0], target[1]], [target[0], Math.max(26, target[1] - 26)],
+                 [target[0], Math.min(92, target[1] + 26)]];
+    for (var j = 0; j < tries.length && spots.length < 3; j++) {
+      if (clearOfFormation(tries[j]) &&
+          spots.every(function (sp) { return dist(sp, tries[j]) > 18; })) spots.push(tries[j]);
+    }
+    spots = shuffle(spots);
 
     host.innerHTML =
       '<div class="drill">' + pips() +
         '<p class="drill__kicker">' + Plays.name(p) + ' · you are the ' + Positions.shortName(me) + '</p>' +
-        '<h2 class="drill__q">Tap where you finish up</h2>' +
-        '<p class="drill__hint">Where does your route end?</p>' +
+        '<h2 class="drill__q">Where do you finish up?</h2>' +
+        '<p class="drill__hint">Tap one of the three spots.</p>' +
         '<div class="drill__field"><svg viewBox="0 20 100 78" ' +
           'preserveAspectRatio="xMidYMid meet"></svg></div>' +
         '<p class="feedback"></p>' +
@@ -187,21 +231,26 @@ var Quiz = (function () {
     var svg = host.querySelector('svg');
     Field.render(svg, p, { focus: me, animate: false });
     svg.querySelectorAll('.f-route, .f-ball').forEach(function (n) { n.style.display = 'none'; });
-    svg.style.cursor = 'crosshair';
 
-    svg.addEventListener('click', function (ev) {
-      if (locked) return;
-      locked = true;
-      var pt = svg.createSVGPoint();
-      pt.x = ev.clientX; pt.y = ev.clientY;
-      var loc = pt.matrixTransform(svg.getScreenCTM().inverse());
-      var dx = loc.x - target[0], dy = loc.y - target[1];
-      var right = Math.sqrt(dx * dx + dy * dy) < 16;   // generous for small fingers
-
-      Field.render(svg, p, { focus: me, animate: true });
-      afterAnswer(right, q, right
-        ? 'Right where your route ends.'
-        : 'Watch it again — that is where you end up.');
+    var NS = 'http://www.w3.org/2000/svg';
+    spots.forEach(function (sp, i) {
+      var g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'f-target');
+      g.setAttribute('transform', 'translate(' + sp[0] + ',' + sp[1] + ')');
+      var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 7.5);
+      var t = document.createElementNS(NS, 'text'); t.setAttribute('y', 1.9);
+      t.textContent = 'ABC'[i];
+      g.appendChild(c); g.appendChild(t);
+      g.addEventListener('click', function () {
+        if (locked) return;
+        locked = true;
+        var right = sp === target;
+        g.setAttribute('class', 'f-target ' + (right ? 'is-right' : 'is-wrong'));
+        Field.render(svg, p, { focus: me, animate: true });
+        afterAnswer(right, q, right ? 'That is where your route ends.'
+                                    : 'Watch it again — that is where you end up.');
+      });
+      svg.appendChild(g);
     });
   }
 

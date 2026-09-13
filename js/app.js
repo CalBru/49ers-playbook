@@ -6,7 +6,7 @@ var App = (function () {
   var $ = function (id) { return document.getElementById(id); };
 
   var state = { pos: null, stars: {}, screen: 'home' };
-  var view  = { play: null, flipped: false, slow: false, anim: null };
+  var view  = { play: null, flipped: false, anim: null };
 
   /* ------------------------------------------------------------- storage */
   function load() {
@@ -78,8 +78,10 @@ var App = (function () {
 
   function syncChip() {
     var p = state.pos && Positions.get(state.pos);
-    $('posChipLabel').textContent = p ? Positions.shortName(p.key) : 'Pick a spot';
-    $('posChipDot').style.background = p ? p.color : '#888';
+    $('posChipLabel').textContent = p ? Positions.shortName(p.key) : 'Pick your spot';
+    $('posChipDot').style.background = p ? p.color : '#fff';
+    /* Nothing forces a position up front, so the chip pulses until one is set. */
+    $('posChip').classList.toggle('is-empty', !p);
   }
 
   function setPos(key) {
@@ -158,10 +160,9 @@ var App = (function () {
     var p = current();
     $('playName').textContent = Plays.name(p);
 
-    var focus = $('justMe').checked ? state.pos : null;
     if (view.anim) { view.anim.stop(); }
     view.anim = Field.render($('fieldSvg'), p, {
-      focus: focus, animate: !!animate, speed: view.slow ? 0.45 : 1
+      focus: state.pos, animate: !!animate
     });
 
     var card = $('jobCard'), txt = $('jobText');
@@ -248,12 +249,6 @@ var App = (function () {
       paintPlay();
       Speech.callPlay(Plays.spoken(current()));
     });
-    $('slowBtn').addEventListener('click', function () {
-      view.slow = !view.slow;
-      $('slowBtn').classList.toggle('is-on', view.slow);
-      paintPlay(true);
-    });
-    $('justMe').addEventListener('change', function () { paintPlay(); });
     $('playNameSpeak').addEventListener('click', function () {
       Speech.callPlay(Plays.spoken(current()));
     });
@@ -265,6 +260,7 @@ var App = (function () {
 
   return {
     go: go, setPos: setPos, confetti: confetti, award: award,
+    posCards: renderPosCards, openSheet: openSheet,
     get pos() { return state.pos; },
     get stars() { return state.stars; },
     starCount: starCount
